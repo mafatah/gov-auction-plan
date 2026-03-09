@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Government Auction Platform — Full Project Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --maroon: #8A1538;
+  --maroon-light: #f5e8ec;
+  --gold: #C5A572;
+  --navy: #1a1a2e;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --orange: #d97706;
+  --orange-light: #fffbeb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.7; }
+.page-break { page-break-after: always; }
+
+/* Header */
+.hero { background: linear-gradient(135deg, var(--maroon) 0%, #5a0e25 60%, var(--navy) 100%); color: white; padding: 60px 40px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(197,165,114,0.15) 0%, transparent 70%); }
+.hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 16px; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+.hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+.hero .subtitle { font-size: 18px; opacity: 0.85; font-weight: 400; margin-bottom: 30px; }
+.hero-meta { display: flex; gap: 30px; flex-wrap: wrap; }
+.hero-meta-item { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 20px; backdrop-filter: blur(8px); }
+.hero-meta-item .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; margin-bottom: 2px; }
+.hero-meta-item .value { font-size: 16px; font-weight: 700; }
+.hero-logos { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.hero-logos .logo-circle { width: 56px; height: 56px; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: var(--maroon); text-align: center; line-height: 1.1; }
+
+/* Nav */
+.toc { background: white; border-bottom: 1px solid var(--gray-200); padding: 16px 40px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.toc-inner { display: flex; gap: 6px; flex-wrap: wrap; }
+.toc a { font-size: 12px; font-weight: 500; color: var(--gray-500); text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: all 0.15s; white-space: nowrap; }
+.toc a:hover { background: var(--maroon-light); color: var(--maroon); }
+
+/* Content */
+.content { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+.section { margin-bottom: 48px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--gray-200); }
+.section-num { width: 36px; height: 36px; background: var(--maroon); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+.section-title { font-size: 22px; font-weight: 800; color: var(--gray-900); }
+.subsection { margin: 24px 0; }
+.subsection h3 { font-size: 16px; font-weight: 700; color: var(--maroon); margin-bottom: 12px; }
+p { margin-bottom: 14px; font-size: 14.5px; color: var(--gray-700); }
+
+/* Cards */
+.card { background: white; border: 1px solid var(--gray-200); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+.card.highlight { border-left: 4px solid var(--maroon); }
+.card.green { border-left: 4px solid var(--green); background: var(--green-light); }
+.card.blue { border-left: 4px solid var(--blue); background: var(--blue-light); }
+.card.orange { border-left: 4px solid var(--orange); background: var(--orange-light); }
+.card-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
+.card-text { font-size: 13.5px; color: var(--gray-600); }
+
+/* Stats Grid */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 20px 0; }
+.stat-card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 20px; text-align: center; }
+.stat-value { font-size: 28px; font-weight: 800; color: var(--maroon); }
+.stat-label { font-size: 12px; color: var(--gray-500); margin-top: 4px; font-weight: 500; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--gray-200); }
+th { background: var(--gray-800); color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+td { padding: 11px 16px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-50); }
+
+/* Lists */
+ul, ol { margin: 12px 0 12px 24px; font-size: 14px; color: var(--gray-700); }
+li { margin-bottom: 6px; }
+li strong { color: var(--gray-900); }
+
+/* Badges */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge.maroon { background: var(--maroon-light); color: var(--maroon); }
+.badge.green { background: var(--green-light); color: var(--green); }
+.badge.blue { background: var(--blue-light); color: var(--blue); }
+.badge.orange { background: var(--orange-light); color: var(--orange); }
+
+/* Phase Flow */
+.phase-flow { display: flex; gap: 2px; margin: 20px 0; flex-wrap: wrap; }
+.phase-step { flex: 1; min-width: 120px; padding: 14px; text-align: center; position: relative; }
+.phase-step .num { width: 28px; height: 28px; background: var(--maroon); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+.phase-step .text { font-size: 11px; font-weight: 600; color: var(--gray-700); }
+.phase-step .days { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+.phase-arrow { display: flex; align-items: center; color: var(--gray-300); font-size: 18px; }
+
+/* Footer */
+.footer { background: var(--gray-800); color: white; padding: 30px 40px; text-align: center; font-size: 13px; opacity: 0.8; }
+
+/* Print */
+@media print {
+  .toc { display: none; }
+  .hero { padding: 30px; }
+  .content { padding: 20px; }
+  body { font-size: 12px; }
+}
+@media (max-width: 768px) {
+  .hero { padding: 30px 20px; }
+  .hero h1 { font-size: 24px; }
+  .hero-meta { gap: 10px; }
+  .toc { padding: 12px 16px; overflow-x: auto; }
+  .content { padding: 20px 16px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logos">
+    <div class="logo-circle">وزارة<br>المالية</div>
+    <div class="logo-circle" style="background:var(--maroon);color:white">MZAD<br>QATAR</div>
+    <div style="font-size:13px;opacity:0.6">×</div>
+    <div class="logo-circle" style="font-size:9px">EBDAA<br>TECH</div>
+  </div>
+  <div class="hero-badge">Tender 2025/4494 — Confidential</div>
+  <h1>Government Auction Platform</h1>
+  <div class="subtitle">Full Technical & Operational Plan — Ministry of Finance, State of Qatar</div>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="label">Contract</div><div class="value">5 Years</div></div>
+    <div class="hero-meta-item"><div class="label">Implementation</div><div class="value">40 Working Days</div></div>
+    <div class="hero-meta-item"><div class="label">Platforms</div><div class="value">App + Web + Dashboard</div></div>
+    <div class="hero-meta-item"><div class="label">User Base</div><div class="value">1M+ Users</div></div>
+    <div class="hero-meta-item"><div class="label">Signed</div><div class="value">Jan 25, 2026</div></div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-inner">
+    <a href="#overview">Overview</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#auth">Authentication</a>
+    <a href="#features">Auction Features</a>
+    <a href="#lifecycle">Lifecycle</a>
+    <a href="#terms">Terms & Conditions</a>
+    <a href="#disputes">Disputes</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#mobile">Mobile App</a>
+    <a href="#website">Website</a>
+    <a href="#security">Security</a>
+    <a href="#marketing">Marketing</a>
+    <a href="#support">Support & SLA</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#edge-cases">Edge Cases</a>
+    <a href="#team">Team</a>
+    <a href="#design">Design Prototype ↗</a>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- 1. OVERVIEW -->
+<div class="section" id="overview">
+  <div class="section-header"><div class="section-num">1</div><div class="section-title">Project Overview</div></div>
+  <div class="card highlight">
+    <div class="card-title">White-Label Government Auction Platform</div>
+    <div class="card-text">Dedicated section within MzadQatar's app and website for Ministry of Finance and authorized government entities to sell and lease government assets through electronic public auctions. Fully synchronized with MzadQatar's existing infrastructure — shared user base, independent operations and permissions.</div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">1M+</div><div class="stat-label">Shared User Base</div></div>
+    <div class="stat-card"><div class="stat-value">1.6M</div><div class="stat-label">App Downloads</div></div>
+    <div class="stat-card"><div class="stat-value">9+</div><div class="stat-label">Govt Partnerships</div></div>
+    <div class="stat-card"><div class="stat-value">9,098</div><div class="stat-label">Items Auctioned (2024)</div></div>
+  </div>
+  <div class="card blue">
+    <div class="card-title">Key Architecture: Real-Time Synchronization</div>
+    <div class="card-text">The platform uses automatic real-time sync between MzadQatar app and the Ministry's dedicated section. Data is synchronized instantly (Real Time) using WebSocket connections. Users can participate from any platform (app, website, or ministry portal) with consistent data.</div>
+  </div>
+</div>
+
+<!-- 2. PLATFORMS -->
+<div class="section" id="platforms">
+  <div class="section-header"><div class="section-num">2</div><div class="section-title">Platform Components</div></div>
+  <table>
+    <tr><th>Platform</th><th>Technology</th><th>Languages</th><th>Status</th></tr>
+    <tr><td><strong>iOS App</strong></td><td>Native (Objective-C, MVVM)</td><td>Arabic + English</td><td><span class="badge green">Existing — Extend</span></td></tr>
+    <tr><td><strong>Android App</strong></td><td>Native (Kotlin)</td><td>Arabic + English</td><td><span class="badge green">Existing — Extend</span></td></tr>
+    <tr><td><strong>Website</strong></td><td>Nuxt.js (Vue), Laravel API</td><td>Arabic + English</td><td><span class="badge green">Existing — Extend</span></td></tr>
+    <tr><td><strong>Admin Dashboard</strong></td><td>Web-based Control Panel</td><td>Arabic + English</td><td><span class="badge orange">New — Build</span></td></tr>
+    <tr><td><strong>Backend API</strong></td><td>Laravel (PHP), MySQL, WebSocket</td><td>—</td><td><span class="badge green">Existing — Extend</span></td></tr>
+  </table>
+</div>
+
+<!-- 3. AUTH -->
+<div class="section" id="auth">
+  <div class="section-header"><div class="section-num">3</div><div class="section-title">Registration & Authentication</div></div>
+  <table>
+    <tr><th>Requirement</th><th>Details</th></tr>
+    <tr><td><strong>Registration</strong></td><td>Phone number + OTP (SMS verification code)</td></tr>
+    <tr><td><strong>At Signup</strong></td><td>Name + bidder type (individual / company)</td></tr>
+    <tr><td><strong>KYC (ID Upload)</strong></td><td>Only required AFTER winning an auction</td></tr>
+    <tr><td><strong>GCC Bidders</strong></td><td>Can participate — toggleable per item by admin</td></tr>
+    <tr><td><strong>Multiple Accounts</strong></td><td>Strictly prohibited — all accounts + deposits confiscated</td></tr>
+  </table>
+</div>
+
+<!-- 4. FEATURES -->
+<div class="section" id="features">
+  <div class="section-header"><div class="section-num">4</div><div class="section-title">Core Auction Features</div></div>
+  <table>
+    <tr><th>#</th><th>Feature</th><th>Details</th></tr>
+    <tr><td>1</td><td><strong>Auto-Extension</strong></td><td>Bid in last 10 min → timer extends 10 min. Configurable. No max duration.</td></tr>
+    <tr><td>2</td><td><strong>Multiple Payment Methods</strong></td><td>Credit card, bank transfer, cash (&lt;50K QAR), Apple Pay, Google Pay</td></tr>
+    <tr><td>3</td><td><strong>Auto-Bidding</strong></td><td>User sets max → system bids automatically up to that limit</td></tr>
+    <tr><td>4</td><td><strong>Deposit Refund</strong></td><td>Request and track refund status in-app</td></tr>
+    <tr><td>5</td><td><strong>GCC Participation</strong></td><td>Toggle per item — allow/disallow GCC country bidders</td></tr>
+    <tr><td>6</td><td><strong>Delivery Service</strong></td><td>Inside/outside Qatar — bidder pays shipping</td></tr>
+    <tr><td>7</td><td><strong>Charity Integration</strong></td><td>Link unsold items to Qatar Charity / Red Crescent</td></tr>
+    <tr><td>8</td><td><strong>Re-listing</strong></td><td>Re-list unsold items with optional discount badge</td></tr>
+    <tr><td>9</td><td><strong>Bidder Transparency</strong></td><td>Username, last 4 digits of phone (****XXXX), country, bid amount</td></tr>
+    <tr><td>10</td><td><strong>Committee Access</strong></td><td>Full phone numbers and amounts visible to committee</td></tr>
+    <tr><td>11</td><td><strong>Government API</strong></td><td>Integration with Ministry of Interior (vehicle transfer), etc.</td></tr>
+    <tr><td>12</td><td><strong>Payment Gateway</strong></td><td>Electronic deposit payment via app</td></tr>
+    <tr><td>13</td><td><strong>Vehicle Parking</strong></td><td>100+ capacity, standard + premium spots for inspection</td></tr>
+    <tr><td>14</td><td><strong>Inspection Center</strong></td><td>Mzad Qatar's own center — detailed condition reports</td></tr>
+  </table>
+
+  <div class="subsection">
+    <h3>Auction Management Services (Provided by Ebdaa)</h3>
+    <ol>
+      <li>Professional photography (standard, video, 360° technology)</li>
+      <li>Content writing and technical details for items</li>
+      <li>Technical reports and condition assessment via inspection center</li>
+      <li>Washing/cleaning of items (vehicles, machinery)</li>
+      <li>Transport and delivery to winning bidder</li>
+      <li>Assistance with government registration (vehicle title transfer)</li>
+      <li>Customer service 24/7</li>
+      <li>Dedicated account manager for government communication</li>
+      <li>Asset valuation/appraisal when requested</li>
+      <li>Payment collection and receipt issuance</li>
+      <li>Reports and notifications to government entities</li>
+      <li>Electronic payment gateway activation</li>
+    </ol>
+  </div>
+</div>
+
+<!-- 5. LIFECYCLE -->
+<div class="section" id="lifecycle">
+  <div class="section-header"><div class="section-num">5</div><div class="section-title">Auction Lifecycle (3 Phases)</div></div>
+
+  <div class="phase-flow">
+    <div class="phase-step"><div class="num">1</div><div class="text">Entity Request</div></div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-step"><div class="num">2</div><div class="text">Committee Approves</div></div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-step"><div class="num">3</div><div class="text">Photography & Inspection</div></div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-step"><div class="num">4</div><div class="text">Valuation</div></div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-step"><div class="num">5</div><div class="text">Auction Live</div></div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-step"><div class="num">6</div><div class="text">Winner Pays</div></div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-step"><div class="num">7</div><div class="text">Handover</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Phase 1 — Before Auction</div>
+    <div class="card-text">
+      <ul>
+        <li>Government entity submits auction request via system</li>
+        <li>Ministry committee reviews and approves</li>
+        <li>Mzad Qatar team: photography, content writing, washing, technical reports</li>
+        <li>Items arranged at inspection locations for bidder access</li>
+        <li>Terms & conditions prepared per entity requirements</li>
+        <li>Committee reviews valuation → sends launch request</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Phase 2 — During Auction</div>
+    <div class="card-text">
+      <ul>
+        <li>Electronic auction goes live with marketing campaigns</li>
+        <li>Operations sets start price, min increment, deposit amount</li>
+        <li>Customer inquiries handled via dedicated number</li>
+        <li>Account manager updates government entity throughout</li>
+        <li>Emergency communication channel available 24/7</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Phase 3 — After Auction</div>
+    <div class="card-text">
+      <ul>
+        <li>Operations coordinates item handover and payment collection</li>
+        <li>Accounts team collects payments, issues receipts</li>
+        <li>48-hour rule: deposit confiscated if winner doesn't pay</li>
+        <li>Marketing reviews results and prepares analytics report</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 6. TERMS -->
+<div class="section" id="terms">
+  <div class="section-header"><div class="section-num">6</div><div class="section-title">Bidder Terms & Conditions</div></div>
+  <ol>
+    <li>Phone registration required to participate and view items</li>
+    <li>Deposit payment required before bidding (system blocks bidding without deposit)</li>
+    <li>Participation = inspection waiver (as-is condition accepted)</li>
+    <li>Items sold as-is; no claims after auction award</li>
+    <li><strong>Winner must collect within 72 hours</strong> of payment (max 10 days with daily penalty)</li>
+    <li><strong>Cash payments over 50,000 QAR prohibited</strong> (bank transfer required per central bank law)</li>
+    <li><strong>Deposit confiscated</strong> if winner fails to pay within 48 hours of notification</li>
+    <li>Technical reports are non-binding; bidder responsible for inspection</li>
+    <li>Deposit refund available if bidder doesn't win any items</li>
+    <li>Bidder must wait for entity approval if bid doesn't reach valuation price</li>
+    <li>Winner must fill owner details form and upload personal ID (KYC)</li>
+    <li>All costs (registration fees, shipping, storage, title transfer) borne by bidder</li>
+  </ol>
+</div>
+
+<!-- 7. DISPUTES -->
+<div class="section" id="disputes">
+  <div class="section-header"><div class="section-num">7</div><div class="section-title">Dispute Resolution & Price Review</div></div>
+  <div class="card orange">
+    <div class="card-title">Dispute Mechanism</div>
+    <div class="card-text">
+      <ol>
+        <li>Mzad Qatar investigates bidder claims</li>
+        <li>Coordinates with government entity to verify</li>
+        <li>Submits recommendation to Ministry committee for approval/rejection</li>
+      </ol>
+      <p style="margin-top:10px"><strong>Accepted:</strong> Delayed delivery beyond timeline, significant condition difference</p>
+      <p><strong>Not accepted:</strong> Disputes after bidder has taken delivery</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Price Review (for unsold items)</div>
+    <div class="card-text">For items unsold after multiple attempts. Committee can accept/reject. Options: extend duration, lower opening price, cancel and re-list, accept current price.</div>
+  </div>
+</div>
+
+<!-- 8. DASHBOARD -->
+<div class="section" id="dashboard">
+  <div class="section-header"><div class="section-num">8</div><div class="section-title">Admin Dashboard (17 Screens)</div></div>
+  <table>
+    <tr><th>Screen</th><th>Description</th></tr>
+    <tr><td><strong>Overview</strong></td><td>KPIs, active auctions, revenue summary, recent activity</td></tr>
+    <tr><td><strong>Workflow Pipeline</strong></td><td>Approval pipeline: Draft → Inspection → Photography → Deposit → Approval → Published → Live → Completed</td></tr>
+    <tr><td><strong>Live Bids</strong></td><td>Real-time auction monitoring with WebSocket</td></tr>
+    <tr><td><strong>Financial Tracking</strong></td><td>Deposits, refunds, late payments, revenue breakdown</td></tr>
+    <tr><td><strong>Government Entities</strong></td><td>Per-entity analytics and performance KPIs</td></tr>
+    <tr><td><strong>Reports</strong></td><td>Monthly, quarterly, annual PDF exports</td></tr>
+    <tr><td><strong>Compliance</strong></td><td>Adherence tracking and operations oversight</td></tr>
+    <tr><td><strong>Asset Valuation</strong></td><td>Government asset appraisal management</td></tr>
+    <tr><td><strong>Invoice Management</strong></td><td>Create and manage invoices/receipts</td></tr>
+    <tr><td><strong>Dispute Management</strong></td><td>Handle disputes and complaints</td></tr>
+    <tr><td><strong>Price Review</strong></td><td>Analysis and recommendations for unsold items</td></tr>
+    <tr><td><strong>Auction Detail</strong></td><td>Full item management with bid history</td></tr>
+    <tr><td><strong>User Management</strong></td><td>Block/unblock users, view bidder profiles</td></tr>
+    <tr><td><strong>Categories</strong></td><td>Create, edit, show/hide auction categories</td></tr>
+    <tr><td><strong>Permissions</strong></td><td>IAM — role-based access control</td></tr>
+    <tr><td><strong>Notifications</strong></td><td>Push/SMS/email notification management</td></tr>
+    <tr><td><strong>Search</strong></td><td>Global search across all data</td></tr>
+  </table>
+</div>
+
+<!-- 9. MOBILE -->
+<div class="section" id="mobile">
+  <div class="section-header"><div class="section-num">9</div><div class="section-title">Mobile App (22 Screens)</div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+    <div class="card"><div class="card-title">Home</div><div class="card-text">Coming auctions bar, categories, featured items, ministry branding</div></div>
+    <div class="card"><div class="card-title">Categories</div><div class="card-text">Photo-grid 2-column layout with real images and item counts</div></div>
+    <div class="card"><div class="card-title">Product Grid</div><div class="card-text">Auction items with timer, price, bid count, masked bidder numbers</div></div>
+    <div class="card"><div class="card-title">Product Detail</div><div class="card-text">300px image gallery, specs grid, action buttons (inspection, location, terms, watchlist), bid history with masked numbers, Q&A section, share popup</div></div>
+    <div class="card"><div class="card-title">Bid Bar</div><div class="card-text">Fixed full-width bottom bar with input + maroon "Raise Bid" button</div></div>
+    <div class="card"><div class="card-title">My Auctions</div><div class="card-text">Active bids, won items, lost items</div></div>
+    <div class="card"><div class="card-title">Login / OTP / Register</div><div class="card-text">Phone + OTP flow, name + bidder type registration</div></div>
+    <div class="card"><div class="card-title">Payment</div><div class="card-text">Card, Apple Pay, Google Pay, bank transfer flow</div></div>
+    <div class="card"><div class="card-title">Bid Confirmation</div><div class="card-text">Success animation, bid details, bid reference number</div></div>
+    <div class="card"><div class="card-title">Auto-Bid Setup</div><div class="card-text">Set maximum bid amount with increment display</div></div>
+    <div class="card"><div class="card-title">KYC / Owner Form</div><div class="card-text">ID upload and owner details after winning</div></div>
+    <div class="card"><div class="card-title">Winner Payment</div><div class="card-text">Full purchase amount payment flow</div></div>
+    <div class="card"><div class="card-title">Invoice</div><div class="card-text">Downloadable receipt/invoice after payment</div></div>
+    <div class="card"><div class="card-title">Deposit Management</div><div class="card-text">View, pay, and request refund for deposits</div></div>
+    <div class="card"><div class="card-title">Profile</div><div class="card-text">Bid history, won items, deposits, settings</div></div>
+    <div class="card"><div class="card-title">More Menu</div><div class="card-text">Wallet, language, help, T&C, FAQ, about, contact</div></div>
+    <div class="card"><div class="card-title">Notifications</div><div class="card-text">Push notification center — bids, wins, announcements</div></div>
+    <div class="card"><div class="card-title">Search</div><div class="card-text">Search overlay with suggestions and filters</div></div>
+    <div class="card"><div class="card-title">FAQ</div><div class="card-text">Common questions with expandable answers</div></div>
+    <div class="card"><div class="card-title">Terms & Conditions</div><div class="card-text">Full T&C display with acceptance</div></div>
+    <div class="card"><div class="card-title">360° View</div><div class="card-text">Interactive product image rotation</div></div>
+    <div class="card"><div class="card-title">Help/Support</div><div class="card-text">Floating Intercom-style button with quick navigation popup</div></div>
+  </div>
+</div>
+
+<!-- 10. WEBSITE -->
+<div class="section" id="website">
+  <div class="section-header"><div class="section-num">10</div><div class="section-title">Website (10+ Pages)</div></div>
+  <table>
+    <tr><th>Page</th><th>Content</th></tr>
+    <tr><td><strong>Home</strong></td><td>Hero, categories, active/coming auctions, how it works, stats, entities</td></tr>
+    <tr><td><strong>Auction Listing</strong></td><td>Filters, sorting, search, grid/list toggle</td></tr>
+    <tr><td><strong>Auction Detail</strong></td><td>Images, specs, bid history, Q&A, share, terms, inspection</td></tr>
+    <tr><td><strong>Login / Register</strong></td><td>Phone + OTP flow</td></tr>
+    <tr><td><strong>User Dashboard</strong></td><td>My bids, won items, deposits, profile</td></tr>
+    <tr><td><strong>FAQ</strong></td><td>Common questions</td></tr>
+    <tr><td><strong>Terms & Conditions</strong></td><td>Full T&C with section navigation</td></tr>
+    <tr><td><strong>Deposit Refund</strong></td><td>Request and track refund</td></tr>
+    <tr><td><strong>About</strong></td><td>Platform overview, Ministry partnership</td></tr>
+    <tr><td><strong>Contact</strong></td><td>Support channels and form</td></tr>
+  </table>
+  <div class="card blue" style="margin-top:16px">
+    <div class="card-title">Technical: Responsive + SEO + Bilingual</div>
+    <div class="card-text">Works on all devices. SEO-optimized for Google visibility. Full Arabic + English support. Synchronized with mobile app in real-time.</div>
+  </div>
+</div>
+
+<!-- 11. SECURITY -->
+<div class="section" id="security">
+  <div class="section-header"><div class="section-num">11</div><div class="section-title">Technical & Security Requirements</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="card-title">Security</div>
+      <div class="card-text">
+        <ul style="margin-left:16px">
+          <li>OWASP best practices</li>
+          <li>IAM (Identity & Access Management)</li>
+          <li>Firewall protection</li>
+          <li>Network monitoring</li>
+          <li>Data encryption (rest + transit)</li>
+          <li>Qatar Law 13/2016 compliance</li>
+          <li>Fraud detection on payments</li>
+          <li>DLP (Data Loss Prevention)</li>
+          <li>Third-party security audits</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Infrastructure</div>
+      <div class="card-text">
+        <ul style="margin-left:16px">
+          <li>Cloud: Google Cloud / Huawei Cloud</li>
+          <li>Database: MySQL</li>
+          <li>Real-time: WebSocket (full-duplex)</li>
+          <li>API: Laravel (PHP) REST APIs</li>
+          <li>Native mobile: iOS (Obj-C) + Android (Kotlin)</li>
+          <li>Web: Nuxt.js (Vue) + Angular</li>
+          <li>Auto-backup for disaster recovery</li>
+          <li>Scalable architecture</li>
+          <li>Government API integrations</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 12. MARKETING -->
+<div class="section" id="marketing">
+  <div class="section-header"><div class="section-num">12</div><div class="section-title">Marketing Strategy</div></div>
+  <table>
+    <tr><th>Channel</th><th>Strategy</th></tr>
+    <tr><td><strong>Social Media</strong></td><td>Instagram (55K), TikTok (20K), Facebook (235K), Snapchat, X</td></tr>
+    <tr><td><strong>In-App Ads</strong></td><td>Banners, full-screen popups targeting 1M+ users</td></tr>
+    <tr><td><strong>Influencers</strong></td><td>Product reviews, story ads, video promotions</td></tr>
+    <tr><td><strong>Direct</strong></td><td>SMS campaigns, push notifications (Law 13/2016 compliant)</td></tr>
+    <tr><td><strong>SEO</strong></td><td>Google search optimization (AHREFS)</td></tr>
+    <tr><td><strong>Automation</strong></td><td>WebEngage — behavioral targeting, retargeting</td></tr>
+    <tr><td><strong>AI</strong></td><td>Recommendation engines for personalized auction suggestions</td></tr>
+    <tr><td><strong>Content</strong></td><td>360° photography, customer experience videos (UGC)</td></tr>
+    <tr><td><strong>Print</strong></td><td>Newspaper ads for auction announcements</td></tr>
+  </table>
+</div>
+
+<!-- 13. SUPPORT -->
+<div class="section" id="support">
+  <div class="section-header"><div class="section-num">13</div><div class="section-title">Support, Training & SLA</div></div>
+  <table>
+    <tr><th>Service</th><th>Frequency</th><th>Owner</th></tr>
+    <tr><td>Performance & security check</td><td>Monthly (12/year)</td><td>Maintenance team</td></tr>
+    <tr><td>Systems & servers check</td><td>Monthly</td><td>Maintenance team</td></tr>
+    <tr><td>Security updates</td><td>Immediate (as needed)</td><td>Dev team</td></tr>
+    <tr><td>Employee training</td><td>As needed</td><td>Project manager</td></tr>
+    <tr><td>KPI-based improvements</td><td>Every 2 months</td><td>Dev team</td></tr>
+    <tr><td>User feedback collection</td><td>Periodic</td><td>Project manager</td></tr>
+    <tr><td>Documentation & archiving</td><td>Continuous</td><td>Business dev</td></tr>
+    <tr><td>Monthly performance reports</td><td>Monthly</td><td>Operations</td></tr>
+  </table>
+
+  <div class="subsection">
+    <h3>Emergency Response SLA</h3>
+    <table>
+      <tr><th>Priority</th><th>Case</th><th>Response Time</th><th>Channel</th></tr>
+      <tr><td><span class="badge maroon">P1</span></td><td>Security breach</td><td><strong>15 minutes</strong></td><td>Hotline / Account manager</td></tr>
+      <tr><td><span class="badge maroon">P1</span></td><td>System failure</td><td><strong>30 minutes</strong></td><td>Hotline / Account manager</td></tr>
+      <tr><td><span class="badge maroon">P1</span></td><td>App performance failure</td><td><strong>30 minutes</strong></td><td>Hotline / Account manager</td></tr>
+      <tr><td><span class="badge orange">P2</span></td><td>Modification request</td><td>1 hour (business hours)</td><td>Account manager</td></tr>
+      <tr><td><span class="badge orange">P2</span></td><td>User reports</td><td>2 hours</td><td>Customer service</td></tr>
+      <tr><td><span class="badge blue">P3</span></td><td>Govt entity communication</td><td>1 hour</td><td>Account manager</td></tr>
+      <tr><td><span class="badge blue">P3</span></td><td>IT incidents</td><td>2 hours</td><td>CS + Account manager</td></tr>
+      <tr><td><span class="badge blue">P3</span></td><td>Minor technical reports</td><td>4 hours</td><td>CS / Email</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 14. TIMELINE -->
+<div class="section" id="timeline">
+  <div class="section-header"><div class="section-num">14</div><div class="section-title">Implementation Timeline (60 Days)</div></div>
+  <table>
+    <tr><th>Phase</th><th>Task</th><th>Duration</th></tr>
+    <tr><td><span class="badge blue">Planning</span></td><td>Define objectives, requirements, schedule</td><td>2 days</td></tr>
+    <tr><td><span class="badge maroon">Design</span></td><td>Update app interface per brand guidelines</td><td>5 days</td></tr>
+    <tr><td><span class="badge maroon">Design</span></td><td>Create wireframes and website design</td><td>7 days</td></tr>
+    <tr><td><span class="badge orange">Review</span></td><td>Design review and client feedback</td><td>3 days</td></tr>
+    <tr><td><span class="badge green">Development</span></td><td>Customize app functions per requirements</td><td>15 days</td></tr>
+    <tr><td><span class="badge green">Development</span></td><td>Compatibility testing (iOS + Android)</td><td>5 days</td></tr>
+    <tr><td><span class="badge green">Development</span></td><td>Website update (frontend + backend)</td><td>20 days</td></tr>
+    <tr><td><span class="badge orange">QA</span></td><td>Comprehensive testing (app + website)</td><td>10 days</td></tr>
+    <tr><td><span class="badge blue">Launch Prep</span></td><td>Final preparation and training</td><td>10 days</td></tr>
+    <tr><td><span class="badge maroon">Launch</span></td><td>Go-live and continuous monitoring</td><td>5 days</td></tr>
+  </table>
+</div>
+
+<!-- 15. PRICING -->
+<div class="section" id="pricing">
+  <div class="section-header"><div class="section-num">15</div><div class="section-title">Pricing Model</div></div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">3%</div><div class="stat-label">Sale Auction Commission<br>(fixed % of total value)</div></div>
+    <div class="stat-card"><div class="stat-value">500 QAR</div><div class="stat-label">Lease Auction Fee<br>(fixed per auction)</div></div>
+    <div class="stat-card"><div class="stat-value">5 Years</div><div class="stat-label">Contract Duration</div></div>
+  </div>
+</div>
+
+<!-- 16. EDGE CASES -->
+<div class="section" id="edge-cases">
+  <div class="section-header"><div class="section-num">16</div><div class="section-title">Edge Cases & Admin Actions</div></div>
+  <p>Full documented flows for every admin action on live auctions with active bids:</p>
+  <table>
+    <tr><th>#</th><th>Scenario</th><th>Status</th></tr>
+    <tr><td>1</td><td><strong>Cancel Auction with Active Bids</strong> — confirmation, 2FA for high-value, deposit refund, notifications</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>2</td><td><strong>Pause Live Auction</strong> — freeze timer, block bids, resume with fair extension</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>3</td><td><strong>Extend Live Auction (Manual)</strong> — admin extends with reason, min 1 hour</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>4</td><td><strong>Winner Forfeits / Doesn't Pay</strong> — 7-day window, penalty, cascade to bidder #2/#3</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>5</td><td><strong>Entity Rejects Bid (Below Valuation)</strong> — accept/extend/lower/re-list options</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>6</td><td><strong>Auto-Bidding Conflicts</strong> — first-to-set wins ties, queue-based processing</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>7</td><td><strong>Simultaneous Bids (Race Condition)</strong> — FIFO queue, optimistic locking</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>8</td><td><strong>Edit While Live</strong> — allowed: description/photos. Blocked: price/increment/deposit</td><td><span class="badge green">Defined</span></td></tr>
+    <tr><td>9</td><td><strong>Auto-Extension Dispute</strong> — auto-evidence report, committee review</td><td><span class="badge green">Defined</span></td></tr>
+  </table>
+  <p style="margin-top:12px;font-size:13px;color:var(--gray-500)">Full flow diagrams for each scenario are available in the detailed requirements document.</p>
+</div>
+
+<!-- 17. TEAM -->
+<div class="section" id="team">
+  <div class="section-header"><div class="section-num">17</div><div class="section-title">Team (25 Members)</div></div>
+  <table>
+    <tr><th>Role</th><th>Name</th><th>Exp</th></tr>
+    <tr><td>Project Manager</td><td>Mostafa Mohamed</td><td>1.5y</td></tr>
+    <tr><td>Operations Manager</td><td>Ameed Atta</td><td>13y</td></tr>
+    <tr><td>Marketing Director</td><td>Mei Mohamed</td><td>10y</td></tr>
+    <tr><td>Design Director</td><td>Victoria Babakina</td><td>8y</td></tr>
+    <tr><td>Product Manager</td><td>Mohamed Dawood</td><td>7y</td></tr>
+    <tr><td>Tech Director</td><td>Abdullah Sanallah</td><td>14y</td></tr>
+    <tr><td>Mobile Team Lead</td><td>Tejas Riyai</td><td>12y</td></tr>
+    <tr><td>Backend Team Lead</td><td>Tigran Mansourian</td><td>12y</td></tr>
+    <tr><td>Finance Director</td><td>Abdulbasit Falabil</td><td>11y</td></tr>
+    <tr><td>QA Lead</td><td>Ahmed Syed</td><td>15y</td></tr>
+    <tr><td colspan="3" style="font-size:12px;color:var(--gray-400)">+ 15 additional specialists (marketing, development, QA, operations, HR)</td></tr>
+  </table>
+</div>
+
+<!-- DESIGN LINK -->
+<div class="section" id="design">
+  <div class="section-header"><div class="section-num">★</div><div class="section-title">Interactive Design Prototype</div></div>
+  <div class="card highlight">
+    <div class="card-title">View the Full Interactive Design</div>
+    <div class="card-text" style="font-size:15px">
+      Open <strong><a href="design.html" style="color:var(--maroon)">design.html</a></strong> in your browser to view the complete interactive prototype with:<br><br>
+      ✓ Admin Dashboard (17 screens)<br>
+      ✓ Mobile App (22 screens with full navigation)<br>
+      ✓ Public Website (10+ pages)<br><br>
+      Toggle between Dashboard / Mobile / Website views using the top buttons.
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Ministry of Finance × Mzad Qatar — Government Auction Platform Plan<br>
+  Tender 2025/4494 — Ebdaa Digital Technology — Confidential<br>
+  Generated March 2026
+</div>
+
+</body>
+</html>
