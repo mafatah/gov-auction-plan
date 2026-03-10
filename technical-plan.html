@@ -181,10 +181,10 @@ p { margin-bottom:12px; font-size:13.5px; }
 <div class="hero">
   <div class="hero-badge">Technical Implementation Plan v2.0 — Option C</div>
   <h1>Government Auction Platform — Config-Driven Single Codebase</h1>
-  <div class="subtitle">PARTNER=government added to existing MzadQatar codebase — Proven Yemen/Algeria pattern — 6-Week Parallel Build</div>
+  <div class="subtitle">PARTNER=government added to existing MzadQatar codebase — Proven Yemen/Algeria pattern — 4-Week AI-Assisted Build</div>
   <div class="hero-stats">
     <div class="hero-stat"><div class="val">Single Codebase</div><div class="lbl">API + Website shared</div></div>
-    <div class="hero-stat"><div class="val">6 Weeks</div><div class="lbl">42 Working Days</div></div>
+    <div class="hero-stat"><div class="val">4 Weeks</div><div class="lbl">28 Working Days (AI-Assisted)</div></div>
     <div class="hero-stat"><div class="val">4 Tracks</div><div class="lbl">Parallel Build</div></div>
     <div class="hero-stat"><div class="val">3 Containers</div><div class="lbl">API + Web + Socket</div></div>
     <div class="hero-stat"><div class="val">~$1,240/mo</div><div class="lbl">Azure Cost</div></div>
@@ -1471,7 +1471,7 @@ body.project-government {
 <div class="phase" id="p7">
   <div class="phase-header">
     <div class="phase-num red">P7</div>
-    <div class="phase-info"><h2>Testing, QA & Azure Deployment</h2><div class="meta">Week 5-6 — Days 29-42 — QA Team + DevOps</div></div>
+    <div class="phase-info"><h2>Testing, QA & Azure Deployment</h2><div class="meta">Week 3-4 — Days 15-28 — QA Team + DevOps</div></div>
   </div>
 
   <div class="grid-2">
@@ -1546,231 +1546,163 @@ body.project-government {
 <div class="phase" id="timeline">
   <div class="phase-header">
     <div class="phase-num azure">📅</div>
-    <div class="phase-info"><h2>6-Week Parallel Timeline</h2><div class="meta">42 Working Days — 4 Parallel Tracks — Realistic Full Scope</div></div>
+    <div class="phase-info"><h2>4-Week Aggressive Timeline (AI-Assisted)</h2><div class="meta">28 Working Days — 4 Parallel Tracks — Every dev has AI Opus pair-programming</div></div>
   </div>
 
-  <div class="card azure-border" style="margin-bottom:14px">
-    <div class="card-title">Why 6 Weeks, Not 4</div>
-    <p>The original 30-day plan was unrealistic. Backend APIs (17 new + 7 modified) need ~3 weeks, and the dashboard and mobile apps cannot integrate until those APIs exist. The admin dashboard alone (17 screens from scratch) is a ~3 week build. QA needs at least 8 working days on staging. This timeline adds proper buffer for integration, bugs, and ministry review.</p>
+  <div class="card maroon-border" style="margin-bottom:14px">
+    <div class="card-title">Why 4 Weeks is Achievable with AI Opus</div>
+    <p>With Claude Opus pair-programming on every task, development speed is <strong>2-3x faster</strong>. AI generates boilerplate, writes CRUD endpoints, scaffolds Vue components, and generates tests. Developer focus shifts to <strong>review, integrate, and test AI output</strong>.</p>
+    <table>
+      <tr><th>Task</th><th>Without AI</th><th>With AI</th><th>How</th></tr>
+      <tr><td>17 new API endpoints</td><td>12 days</td><td><strong>5 days</strong></td><td>AI generates controllers + models + migrations. Dev reviews + business logic.</td></tr>
+      <tr><td>Partner checks (15 files)</td><td>2 days</td><td><strong>0.5 days</strong></td><td>AI reads pattern, generates all elseif blocks.</td></tr>
+      <tr><td>17 dashboard screens</td><td>18 days</td><td><strong>8 days</strong></td><td>AI scaffolds Vue from design. Dev wires API + polishes.</td></tr>
+      <tr><td>Website rebrand (12 pages)</td><td>7 days</td><td><strong>2 days</strong></td><td>CSS variables + v-if — AI does bulk.</td></tr>
+      <tr><td>Mobile strip + rebrand</td><td>9 days</td><td><strong>4 days</strong></td><td>AI identifies classifieds, generates branding changes.</td></tr>
+      <tr><td>Mobile 10 new screens</td><td>10 days</td><td><strong>5 days</strong></td><td>AI generates VCs/Activities from existing patterns.</td></tr>
+      <tr><td>Tests</td><td>5 days</td><td><strong>2 days</strong></td><td>AI generates PHPUnit stubs from controller signatures.</td></tr>
+      <tr><td>9 Azure code changes</td><td>3 days</td><td><strong>1 day</strong></td><td>Config changes — AI writes in one pass.</td></tr>
+    </table>
   </div>
 
-  <!-- VISUAL GANTT — 6 weeks = 42 days, 7 cols per week -->
   <div style="overflow-x:auto">
-  <table style="min-width:1050px;font-size:11px">
+  <table style="min-width:800px;font-size:11px">
     <tr>
       <th style="width:170px;min-width:170px">Track / Task</th>
       <th colspan="7" style="background:var(--azure);text-align:center">Week 1 (D1-7)</th>
       <th colspan="7" style="background:var(--green);text-align:center">Week 2 (D8-14)</th>
       <th colspan="7" style="background:var(--purple);text-align:center">Week 3 (D15-21)</th>
-      <th colspan="7" style="background:var(--orange);text-align:center">Week 4 (D22-28)</th>
-      <th colspan="7" style="background:var(--red);text-align:center">Week 5 (D29-35)</th>
-      <th colspan="7" style="background:var(--maroon);text-align:center">Week 6 (D36-42)</th>
+      <th colspan="7" style="background:var(--maroon);text-align:center">Week 4 (D22-28)</th>
     </tr>
 
     <!-- Track 1: DevOps -->
-    <tr><td colspan="43" style="background:var(--azure-light);font-weight:800;color:var(--azure);padding:8px 12px;font-size:12px">TRACK 1: DevOps & Infrastructure</td></tr>
+    <tr><td colspan="29" style="background:var(--azure-light);font-weight:800;color:var(--azure);padding:8px 12px;font-size:12px">TRACK 1: DevOps & Infrastructure</td></tr>
     <tr>
-      <td style="font-weight:600">Azure resources</td>
-      <td colspan="3" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">RG, ACR, VNet</span></td>
-      <td colspan="39"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">MySQL + Redis + Blob</td>
-      <td colspan="2"></td>
-      <td colspan="3" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Provision DBs</span></td>
-      <td colspan="37"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Dockerfiles + Compose</td>
-      <td colspan="5" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">3 Dockerfiles + docker-compose</span></td>
-      <td colspan="37"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">DB export from live</td>
-      <td colspan="2" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Schema+Seed</span></td>
-      <td colspan="40"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">CI/CD pipeline</td>
-      <td colspan="7"></td>
-      <td colspan="4" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">GitHub Actions</span></td>
-      <td colspan="31"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Staging deploy</td>
-      <td colspan="14"></td>
-      <td colspan="3" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Azure staging</span></td>
+      <td style="font-weight:600">Azure + Docker + DB export</td>
+      <td colspan="3" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">RG, ACR, MySQL, Redis, Blob, Dockerfiles, schema export — AI generates scripts</span></td>
       <td colspan="25"></td>
     </tr>
     <tr>
-      <td style="font-weight:600">Prod env prep</td>
-      <td colspan="28"></td>
-      <td colspan="5" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Prod setup</span></td>
-      <td colspan="9"></td>
+      <td style="font-weight:600">CI/CD pipeline</td>
+      <td colspan="3"></td>
+      <td colspan="2" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">GitHub Actions</span></td>
+      <td colspan="23"></td>
     </tr>
     <tr>
-      <td style="font-weight:600">Production deploy</td>
-      <td colspan="35"></td>
-      <td colspan="5" style="background:var(--maroon);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">GO LIVE + monitor</span></td>
+      <td style="font-weight:600">Staging deploy</td>
+      <td colspan="7"></td>
+      <td colspan="2" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Azure staging</span></td>
+      <td colspan="19"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Prod + GO LIVE</td>
+      <td colspan="21"></td>
+      <td colspan="5" style="background:var(--maroon);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Prod setup + GO LIVE + monitor</span></td>
       <td colspan="2"></td>
     </tr>
 
     <!-- Track 2: Backend -->
-    <tr><td colspan="43" style="background:var(--green-light);font-weight:800;color:var(--green);padding:8px 12px;font-size:12px">TRACK 2: Backend API (Laravel)</td></tr>
+    <tr><td colspan="29" style="background:var(--green-light);font-weight:800;color:var(--green);padding:8px 12px;font-size:12px">TRACK 2: Backend API (Laravel + AI Opus)</td></tr>
     <tr>
-      <td style="font-weight:600">Create feature branch</td>
-      <td colspan="2" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">feature/government-auction</span></td>
-      <td colspan="40"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">9 Azure code changes</td>
-      <td colspan="4"></td>
-      <td colspan="3" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Redis TLS, Blob, SSL</span></td>
-      <td colspan="35"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Add partner checks</td>
-      <td colspan="4"></td>
-      <td colspan="2" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Gov cases</span></td>
-      <td colspan="36"></td>
+      <td style="font-weight:600">Branch + Azure + partner checks + migrations</td>
+      <td colspan="2" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Branch, 9 Azure, 15 partner, 8 migrations — AI generates all</span></td>
+      <td colspan="26"></td>
     </tr>
     <tr>
       <td style="font-weight:600">17 new API endpoints</td>
-      <td colspan="7"></td>
-      <td colspan="12" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Entities, Pipeline, Valuations, Disputes, KYC, Invoices, Compliance, Reports, Audit</span></td>
-      <td colspan="23"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Modify existing (7)</td>
-      <td colspan="14"></td>
-      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">BidsCtrl, Users, Payment</span></td>
-      <td colspan="23"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Unit + integration tests</td>
+      <td colspan="2"></td>
+      <td colspan="5" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">AI generates CRUD → Dev reviews → Entities, Pipeline, Valuations, Disputes, KYC, Invoices, Compliance, Reports, Audit</span></td>
       <td colspan="21"></td>
-      <td colspan="5" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">PHPUnit tests</span></td>
-      <td colspan="16"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Modify existing (7) + tests</td>
+      <td colspan="7"></td>
+      <td colspan="4" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">BidsCtrl masking, Users bidder_type, Payment + PHPUnit — AI generates tests</span></td>
+      <td colspan="17"></td>
     </tr>
     <tr>
       <td style="font-weight:600">Bug fixes from QA</td>
-      <td colspan="28"></td>
-      <td colspan="10" style="background:var(--gray-400);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fixes from QA + UAT feedback</span></td>
-      <td colspan="4"></td>
+      <td colspan="14"></td>
+      <td colspan="12" style="background:var(--gray-400);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fixes from QA + integration + UAT</span></td>
+      <td colspan="2"></td>
     </tr>
 
     <!-- Track 3: Frontend -->
-    <tr><td colspan="43" style="background:var(--purple-light);font-weight:800;color:var(--purple);padding:8px 12px;font-size:12px">TRACK 3: Website + Admin Dashboard (Vue 3)</td></tr>
+    <tr><td colspan="29" style="background:var(--purple-light);font-weight:800;color:var(--purple);padding:8px 12px;font-size:12px">TRACK 3: Website + Admin Dashboard (Vue 3 + AI Opus)</td></tr>
     <tr>
-      <td style="font-weight:600">Create feature branch</td>
-      <td colspan="2" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">feature/government-auction</span></td>
-      <td colspan="40"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Ministry branding</td>
-      <td colspan="3"></td>
-      <td colspan="4" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Maroon, fonts, logos</span></td>
-      <td colspan="35"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Rebrand 12 pages</td>
-      <td colspan="7"></td>
-      <td colspan="7" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Home, Detail, Login, User, Bids, Watch, Refund, Notify, Pay</span></td>
-      <td colspan="28"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">5 new pages</td>
-      <td colspan="14"></td>
-      <td colspan="5" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Terms, FAQ, About, KYC, Invoice</span></td>
-      <td colspan="23"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Dashboard (17 screens)</td>
-      <td colspan="10"></td>
-      <td colspan="18" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Overview → Pipeline → LiveBids → Financial → Entities → Reports → Compliance → Valuations → Invoices → Disputes → PriceReview → AuctionDetail → Users → Categories → Permissions → Notifications → Search</span></td>
-      <td colspan="14"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Bug fixes from QA</td>
-      <td colspan="28"></td>
-      <td colspan="10" style="background:var(--gray-400);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fixes from QA + UAT feedback</span></td>
-      <td colspan="4"></td>
-    </tr>
-
-    <!-- Track 4: Mobile -->
-    <tr><td colspan="43" style="background:var(--orange-light);font-weight:800;color:var(--orange);padding:8px 12px;font-size:12px">TRACK 4: Mobile Apps (iOS + Android)</td></tr>
-    <tr>
-      <td style="font-weight:600">Fork + clean mobile</td>
-      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fork iOS+Android, strip classifieds</span></td>
-      <td colspan="37"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Ministry branding</td>
-      <td colspan="5"></td>
-      <td colspan="4" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Icons, colors, tabs, splash</span></td>
-      <td colspan="33"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Modify existing screens</td>
-      <td colspan="10"></td>
-      <td colspan="7" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Detail, masking, bid bar, Q&A, gallery</span></td>
+      <td style="font-weight:600">Branch + branding + rebrand 12 pages</td>
+      <td colspan="3" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">CSS vars, v-if gov, rebrand Home/Detail/Login/User/Bids — AI bulk insert</span></td>
       <td colspan="25"></td>
     </tr>
     <tr>
-      <td style="font-weight:600">10 new screens</td>
-      <td colspan="14"></td>
-      <td colspan="10" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">AutoBid, KYC, DepositPay, WinnerPay, Invoice, Share, Help, More</span></td>
-      <td colspan="18"></td>
+      <td style="font-weight:600">Dashboard 17 screens</td>
+      <td colspan="3"></td>
+      <td colspan="8" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">AI scaffolds → Overview, Pipeline, LiveBids, Financial, Entities, Reports, Compliance, Valuations, Invoices, Disputes, PriceReview, AuctionDetail, Users, Cats, Perms, Notif, Search</span></td>
+      <td colspan="17"></td>
     </tr>
     <tr>
-      <td style="font-weight:600">Connect Azure API</td>
-      <td colspan="24"></td>
-      <td colspan="4" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Wire to staging</span></td>
+      <td style="font-weight:600">5 new pages + polish</td>
+      <td colspan="11"></td>
+      <td colspan="3" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Terms, FAQ, About, KYC, Invoice</span></td>
       <td colspan="14"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">TestFlight / Play Console</td>
-      <td colspan="28"></td>
-      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Internal testing</span></td>
-      <td colspan="9"></td>
     </tr>
     <tr>
       <td style="font-weight:600">Bug fixes from QA</td>
-      <td colspan="28"></td>
-      <td colspan="10" style="background:var(--gray-400);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fixes from QA + UAT</span></td>
+      <td colspan="14"></td>
+      <td colspan="12" style="background:var(--gray-400);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fixes from QA + integration + UAT</span></td>
+      <td colspan="2"></td>
+    </tr>
+
+    <!-- Track 4: Mobile -->
+    <tr><td colspan="29" style="background:var(--orange-light);font-weight:800;color:var(--orange);padding:8px 12px;font-size:12px">TRACK 4: Mobile Apps (iOS + Android + AI Opus)</td></tr>
+    <tr>
+      <td style="font-weight:600">Fork + strip + rebrand</td>
+      <td colspan="4" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fork, AI strips classifieds, ministry branding</span></td>
+      <td colspan="24"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Modify existing + 10 new screens</td>
       <td colspan="4"></td>
+      <td colspan="7" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Detail masking, Q&A, bid bar + AutoBid, KYC, Deposit, Winner, Invoice, Share, Help, More</span></td>
+      <td colspan="17"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Connect Azure API + TestFlight</td>
+      <td colspan="11"></td>
+      <td colspan="3" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Wire staging + submit</span></td>
+      <td colspan="14"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Bug fixes from QA</td>
+      <td colspan="14"></td>
+      <td colspan="12" style="background:var(--gray-400);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fixes from QA + UAT</span></td>
+      <td colspan="2"></td>
     </tr>
 
     <!-- QA -->
-    <tr><td colspan="43" style="background:var(--red-light);font-weight:800;color:var(--red);padding:8px 12px;font-size:12px">QA & LAUNCH</td></tr>
+    <tr><td colspan="29" style="background:var(--red-light);font-weight:800;color:var(--red);padding:8px 12px;font-size:12px">QA & LAUNCH</td></tr>
     <tr>
       <td style="font-weight:600">E2E testing (all)</td>
-      <td colspan="21"></td>
-      <td colspan="8" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Full flow: register, bid, win, pay, KYC (web + mobile + dashboard)</span></td>
-      <td colspan="13"></td>
+      <td colspan="14"></td>
+      <td colspan="5" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Full flow: register → bid → win → pay → KYC (web + mobile + dashboard)</span></td>
+      <td colspan="9"></td>
     </tr>
     <tr>
-      <td style="font-weight:600">Security scan (OWASP)</td>
-      <td colspan="28"></td>
-      <td colspan="4" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">OWASP scan</span></td>
-      <td colspan="10"></td>
-    </tr>
-    <tr>
-      <td style="font-weight:600">Load test (1K users)</td>
-      <td colspan="29"></td>
-      <td colspan="3" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">k6 load</span></td>
-      <td colspan="10"></td>
+      <td style="font-weight:600">Security + Load test</td>
+      <td colspan="19"></td>
+      <td colspan="3" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">OWASP + k6 1K users</span></td>
+      <td colspan="6"></td>
     </tr>
     <tr>
       <td style="font-weight:600">UAT (Ministry)</td>
-      <td colspan="35"></td>
-      <td colspan="5" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Ministry committee review</span></td>
+      <td colspan="22"></td>
+      <td colspan="4" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Ministry committee review</span></td>
       <td colspan="2"></td>
     </tr>
     <tr>
       <td style="font-weight:600">GO LIVE</td>
-      <td colspan="40"></td>
-      <td colspan="2" style="background:var(--maroon);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px;font-weight:800">LIVE Day 42</span></td>
+      <td colspan="26"></td>
+      <td colspan="2" style="background:var(--maroon);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px;font-weight:800">LIVE Day 28</span></td>
     </tr>
   </table>
   </div>
@@ -1778,12 +1710,12 @@ body.project-government {
   <div class="sub">
     <h3>Team Assignment per Track</h3>
     <table>
-      <tr><th>Track</th><th>Lead</th><th>Team</th><th>Active Days</th></tr>
-      <tr><td style="color:var(--azure);font-weight:700">Track 1: DevOps</td><td>Abdullah Sanallah (Tech Director)</td><td>1 DevOps engineer</td><td>Throughout (D1-D42)</td></tr>
-      <tr><td style="color:var(--green);font-weight:700">Track 2: Backend</td><td>Tigran Mansourian (Backend Lead)</td><td>Ronen + 1 backend dev</td><td>D1-D26, then bug fixes D28-D40</td></tr>
-      <tr><td style="color:var(--purple);font-weight:700">Track 3: Frontend</td><td>Victoria Babakina (Design) + Frontend dev</td><td>1-2 frontend devs</td><td>D1-D28, then bug fixes D28-D40</td></tr>
-      <tr><td style="color:var(--orange);font-weight:700">Track 4: Mobile</td><td>Tejas Riyai (Mobile Lead)</td><td>Arun (iOS) + 1 Android dev</td><td>D1-D28, then bug fixes D28-D40</td></tr>
-      <tr><td style="color:var(--red);font-weight:700">QA</td><td>Ahmed Syed (QA Lead)</td><td>Mazen + Mostafa Eid</td><td>D22-D42</td></tr>
+      <tr><th>Track</th><th>Lead</th><th>Team</th><th>AI Role</th><th>Active Days</th></tr>
+      <tr><td style="color:var(--azure);font-weight:700">Track 1: DevOps</td><td>Abdullah Sanallah</td><td>1 DevOps</td><td>AI generates Dockerfiles, CI/CD yaml, Azure CLI scripts</td><td>D1-D28</td></tr>
+      <tr><td style="color:var(--green);font-weight:700">Track 2: Backend</td><td>Tigran Mansourian</td><td>Ronen + 1 dev</td><td>AI generates controllers, models, migrations, tests, partner checks</td><td>D1-D11, fixes D14-D26</td></tr>
+      <tr><td style="color:var(--purple);font-weight:700">Track 3: Frontend</td><td>Victoria Babakina + dev</td><td>1-2 frontend</td><td>AI scaffolds Vue pages from design HTML, generates API integration</td><td>D1-D14, fixes D14-D26</td></tr>
+      <tr><td style="color:var(--orange);font-weight:700">Track 4: Mobile</td><td>Tejas Riyai</td><td>Arun + 1 Android</td><td>AI strips classifieds, generates new VCs/Activities from patterns</td><td>D1-D14, fixes D14-D26</td></tr>
+      <tr><td style="color:var(--red);font-weight:700">QA</td><td>Ahmed Syed</td><td>Mazen + Mostafa</td><td>AI generates test cases, automated scripts</td><td>D15-D28</td></tr>
     </table>
   </div>
 
@@ -1791,63 +1723,42 @@ body.project-government {
     <h3>Week-by-Week Summary</h3>
     <div class="grid-2">
       <div class="card azure-border">
-        <div class="card-title">Week 1 (Days 1-7) — Foundation</div>
+        <div class="card-title">Week 1 (Days 1-7) — Foundation + Core Backend</div>
         <ul>
-          <li><strong>All tracks</strong>: Create <code>feature/government-auction</code> branches on existing API + website repos</li>
-          <li><strong>DevOps</strong>: Azure resources, Dockerfiles, docker-compose, DB schema+seed export from live (192.168.0.149)</li>
-          <li><strong>Backend</strong>: Add <code>PARTNER=government</code> to ~15 partner checks, add <code>api_government.php</code> routes, 9 Azure code changes (Redis TLS, Blob, MySQL SSL), 8 new DB table migrations</li>
-          <li><strong>Frontend</strong>: Start ministry branding (maroon #8A1538, Noto Kufi Arabic, conditional <code>v-if="project==='government'"</code>)</li>
-          <li><strong>Mobile</strong>: Fork iOS/Android repos (same as Yemen), strip classified/shop/chatbot, start branding (icons, splash, tabs, colors)</li>
+          <li><strong>DevOps</strong>: Azure provisioning (all resources), Dockerfiles, docker-compose, DB export, CI/CD pipeline — <em>AI generates all scripts</em></li>
+          <li><strong>Backend</strong>: Feature branch, 9 Azure changes, 15 partner checks, 8 DB migrations, start 17 APIs — <em>AI generates boilerplate, dev adds business logic</em></li>
+          <li><strong>Frontend</strong>: Feature branch, CSS brand variables, rebrand 12 existing pages with <code>v-if</code> — <em>AI does bulk conditional insertion</em></li>
+          <li><strong>Mobile</strong>: Fork repos, AI strips classified/shop code, start ministry branding (colors, icons, tabs, splash)</li>
         </ul>
-        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: Feature branches ready, partner config added, running locally via Docker. New database schema ready.</p>
+        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: Azure ready, partner config done, APIs ~50% complete, website rebranded, mobile stripped.</p>
       </div>
       <div class="card green-border">
-        <div class="card-title">Week 2 (Days 8-14) — Core Backend + Branding</div>
+        <div class="card-title">Week 2 (Days 8-14) — Complete Build</div>
         <ul>
-          <li><strong>DevOps</strong>: CI/CD pipeline (GitHub Actions to Azure Container Apps)</li>
-          <li><strong>Backend</strong>: Build 17 new API endpoints in <code>Government/</code> folder (GovernmentEntity, Pipeline, Valuation, Dispute, KYC, Invoice, Compliance, Report, Audit) — aim for 10 done by end of week</li>
-          <li><strong>Frontend</strong>: Add government branding conditionals to 12 existing pages (<code>v-if="project==='government'"</code>), start admin dashboard scaffold (layout, sidebar, routing in <code>Pages/Admin/</code>)</li>
-          <li><strong>Mobile</strong>: Complete branding, begin modifying existing screens (product detail: masking, Q&A, bid bar, action buttons, 300px gallery)</li>
+          <li><strong>DevOps</strong>: Deploy to Azure staging</li>
+          <li><strong>Backend</strong>: Complete all 17 APIs + 7 modified controllers + unit tests — <em>AI generates test stubs</em></li>
+          <li><strong>Frontend</strong>: Dashboard intensive — all 17 screens + 5 new pages — <em>AI scaffolds from design prototype</em></li>
+          <li><strong>Mobile</strong>: Complete modified + 10 new screens, connect staging API — <em>AI generates VCs from patterns</em></li>
         </ul>
-        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: Website rebranded. Most backend APIs available for frontend integration.</p>
-      </div>
-      <div class="card purple-border">
-        <div class="card-title">Week 3 (Days 15-21) — Dashboard + Mobile Features</div>
-        <ul>
-          <li><strong>DevOps</strong>: Deploy to Azure staging environment</li>
-          <li><strong>Backend</strong>: Complete remaining API endpoints + modify 7 existing controllers (BidsController entity filter, UsersController bidder_type, PayfortController Apple/Google Pay)</li>
-          <li><strong>Frontend</strong>: Dashboard intensive — build 10 of 17 screens (Overview, Pipeline, Live Bids, Financial, Entities, Reports, Compliance, Valuations, Invoices, Disputes)</li>
-          <li><strong>Mobile</strong>: New screens — AutoBid, KYC Form, Deposit Payment, Winner Payment, Invoice view</li>
-        </ul>
-        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: Staging environment live. Backend APIs complete. Dashboard half done.</p>
-      </div>
-      <div class="card orange-border">
-        <div class="card-title">Week 4 (Days 22-28) — Complete + Integrate</div>
-        <ul>
-          <li><strong>Backend</strong>: Unit + integration tests. Bug fixes from frontend/mobile integration feedback</li>
-          <li><strong>Frontend</strong>: Complete remaining 7 dashboard screens (Price Review, Auction Detail admin, User Management, Categories, Permissions, Notifications, Search) + 5 new pages in <code>Pages/Static/</code> (Terms, FAQ, About, KYC, Invoice)</li>
-          <li><strong>Mobile</strong>: SharePopup, HelpFAB, MoreMenu, connect all screens to Azure staging API</li>
-          <li><strong>QA starts</strong>: E2E testing begins — full registration-to-bid-to-win-to-pay flow on staging</li>
-        </ul>
-        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: All screens built. All APIs connected. QA testing in progress.</p>
+        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: ALL code complete. Staging live. Ready for QA.</p>
       </div>
       <div class="card red-border">
-        <div class="card-title">Week 5 (Days 29-35) — QA + Fix</div>
+        <div class="card-title">Week 3 (Days 15-21) — QA + Fix</div>
         <ul>
-          <li><strong>QA</strong>: Full E2E testing (website + dashboard + iOS + Android), OWASP security scan, load test (1K concurrent users with k6)</li>
-          <li><strong>All devs</strong>: Bug fixes from QA feedback — critical and high priority</li>
-          <li><strong>Mobile</strong>: TestFlight (iOS) + Play Console internal testing (Android)</li>
-          <li><strong>DevOps</strong>: Production environment prepared (separate from staging)</li>
+          <li><strong>QA starts</strong>: Full E2E testing (web + mobile + dashboard), OWASP security scan, load testing</li>
+          <li><strong>All devs</strong>: Fix bugs from QA — critical/high priority first</li>
+          <li><strong>Mobile</strong>: TestFlight + Play Console internal testing</li>
+          <li><strong>DevOps</strong>: Production environment setup</li>
         </ul>
-        <p style="font-size:11px;color:var(--red);font-weight:700;margin-top:8px">Milestone: All critical/high bugs fixed. App submitted for UAT.</p>
+        <p style="font-size:11px;color:var(--red);font-weight:700;margin-top:8px">Milestone: All critical bugs fixed. Security scan passed. Ready for UAT.</p>
       </div>
       <div class="card maroon-border">
-        <div class="card-title">Week 6 (Days 36-42) — UAT + Ship</div>
+        <div class="card-title">Week 4 (Days 22-28) — UAT + Ship</div>
         <ul>
-          <li><strong>UAT</strong>: Ministry committee acceptance testing (3-5 days)</li>
+          <li><strong>UAT</strong>: Ministry committee testing (4 days)</li>
           <li><strong>All devs</strong>: Hotfixes from UAT feedback</li>
-          <li><strong>DevOps</strong>: Production deploy, Cloudflare DNS cutover, monitoring + alerts configured</li>
-          <li><strong>Day 42</strong>: GO LIVE — production active, team on 24/7 standby</li>
+          <li><strong>DevOps</strong>: Production deploy, Cloudflare DNS, monitoring</li>
+          <li><strong>Day 28</strong>: GO LIVE — merge to master, deploy, 24/7 standby</li>
         </ul>
         <p style="font-size:11px;color:var(--maroon);font-weight:700;margin-top:8px">Milestone: Production live, monitoring active, first-week standby.</p>
       </div>
@@ -1855,27 +1766,26 @@ body.project-government {
   </div>
 
   <div class="card navy-border">
-    <div class="card-title">Critical Dependencies (things that block other tracks)</div>
+    <div class="card-title">Critical Dependencies</div>
     <table>
       <tr><th>Blocker</th><th>Blocks</th><th>When Needed</th></tr>
-      <tr><td>Feature branch created on API + website</td><td>Backend can't start adding government code</td><td>Day 1</td></tr>
-      <tr><td>DB export from live (schema + seed)</td><td>Backend can't test locally</td><td>Day 1-2</td></tr>
-      <tr><td>docker-compose working</td><td>All devs need local env</td><td>Day 3</td></tr>
-      <tr><td>Firebase project created</td><td>Push notifications (mobile + backend)</td><td>Day 10</td></tr>
-      <tr><td>Twilio configured</td><td>OTP/SMS login flow</td><td>Day 10</td></tr>
-      <tr><td>Payment gateway (Payfort) sandbox</td><td>Can't test deposit/payment flow</td><td>Day 14</td></tr>
-      <tr><td>API endpoints ready (most)</td><td>Dashboard + Mobile need APIs to integrate</td><td>Day 19 (all complete by D21)</td></tr>
-      <tr><td>Azure staging deployed</td><td>QA can't start full E2E testing</td><td>Day 17</td></tr>
-      <tr><td>All screens built + connected</td><td>QA needs complete app for full E2E</td><td>Day 28</td></tr>
-      <tr><td>QA sign-off (no critical bugs)</td><td>UAT can't start with critical issues</td><td>Day 35</td></tr>
+      <tr><td>Feature branch created + DB export from live</td><td>All backend work</td><td>Day 1</td></tr>
+      <tr><td>docker-compose working</td><td>All devs need local env</td><td>Day 2</td></tr>
+      <tr><td>Firebase + Twilio configured</td><td>Push notifications + OTP flow</td><td>Day 5</td></tr>
+      <tr><td>Payfort sandbox keys</td><td>Payment flow testing</td><td>Day 7</td></tr>
+      <tr><td>Backend APIs complete</td><td>Dashboard + Mobile integration</td><td>Day 11</td></tr>
+      <tr><td>Azure staging deployed</td><td>Full E2E testing</td><td>Day 9</td></tr>
+      <tr><td>All screens built + connected</td><td>QA needs complete app</td><td>Day 14</td></tr>
+      <tr><td>QA sign-off (no critical bugs)</td><td>UAT can start</td><td>Day 21</td></tr>
     </table>
   </div>
 
   <div class="card" style="border-left:4px solid var(--gray-700);margin-top:14px">
     <div class="card-title">Critical Path (minimum time chain)</div>
-    <div class="code-block" style="background:var(--gray-100);color:var(--gray-800);font-size:13px;line-height:2">Feature Branch (D1) → Partner Config (D1-3) → Gov APIs (D8-21) → Dashboard Integration (D15-28) → QA E2E (D22-35) → UAT (D36-40) → Merge to master + GO LIVE (D42)
+    <div class="code-block" style="background:var(--gray-100);color:var(--gray-800);font-size:13px;line-height:2">Feature Branch (D1) → Backend APIs w/AI (D2-11) → Dashboard Integration (D4-14) → QA E2E (D15-21) → UAT (D22-26) → GO LIVE (D28)
 
-<span class="comment">This chain is 42 days — exactly 6 weeks. Merging to master deploys to all tenants (same image, different .env).</span></div>
+<span class="comment">28 days — 4 weeks. AI reduces coding time by ~50%. Developer focus shifts to review + integration.</span></div>
+  </div>
   </div>
 </div>
 
