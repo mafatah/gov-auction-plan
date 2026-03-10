@@ -179,24 +179,25 @@ p { margin-bottom:12px; font-size:13.5px; }
 
 <!-- ======== HERO ======== -->
 <div class="hero">
-  <div class="hero-badge">Technical Implementation Plan v1.0</div>
-  <h1>Government Auction Platform — Azure Migration</h1>
-  <div class="subtitle">From MzadQatar Fork to Production — 6-Week Parallel Build (4 Tracks)</div>
+  <div class="hero-badge">Technical Implementation Plan v2.0 — Option C</div>
+  <h1>Government Auction Platform — Config-Driven Single Codebase</h1>
+  <div class="subtitle">PARTNER=government added to existing MzadQatar codebase — Proven Yemen/Algeria pattern — 6-Week Parallel Build</div>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="val">8 Phases</div><div class="lbl">Implementation</div></div>
+    <div class="hero-stat"><div class="val">Single Codebase</div><div class="lbl">API + Website shared</div></div>
     <div class="hero-stat"><div class="val">6 Weeks</div><div class="lbl">42 Working Days</div></div>
     <div class="hero-stat"><div class="val">4 Tracks</div><div class="lbl">Parallel Build</div></div>
     <div class="hero-stat"><div class="val">3 Containers</div><div class="lbl">API + Web + Socket</div></div>
     <div class="hero-stat"><div class="val">~$1,240/mo</div><div class="lbl">Azure Cost</div></div>
-    <div class="hero-stat"><div class="val">Auction Only</div><div class="lbl">Fork from Live</div></div>
+    <div class="hero-stat"><div class="val">PARTNER=government</div><div class="lbl">Same as Yemen/Algeria</div></div>
   </div>
 </div>
 
 <!-- ======== NAV ======== -->
 <div class="nav">
+  <a href="#strategy">Strategy</a>
   <a href="#arch">Architecture</a>
   <a href="#p0">P0: Azure Infra</a>
-  <a href="#p1">P1: Fork & Docker</a>
+  <a href="#p1">P1: Partner Config</a>
   <a href="#p2">P2: Backend Changes</a>
   <a href="#p3">P3: New Features</a>
   <a href="#p4">P4: Admin Dashboard</a>
@@ -210,6 +211,163 @@ p { margin-bottom:12px; font-size:13.5px; }
 
 <!-- ======== CONTENT ======== -->
 <div class="content">
+
+<!-- ========== STRATEGY: WHY SINGLE CODEBASE ========== -->
+<div class="phase" id="strategy">
+  <div class="phase-header">
+    <div class="phase-num maroon">★</div>
+    <div class="phase-info"><h2>Code Sharing Strategy — Option C: Config-Driven Single Codebase</h2><div class="meta">Proven pattern already running Yemen Mazad + Mzady (Algeria) on the same MzadQatar codebase</div></div>
+  </div>
+
+  <div class="card maroon-border" style="margin-bottom:14px">
+    <div class="card-title">How MzadQatar Already Works (3 Tenants Today)</div>
+    <p>The MzadQatar API is a <strong>single Laravel codebase</strong> that serves 3 countries via the <code>PARTNER</code> environment variable. Each tenant gets its own <code>.env</code>, its own database, and its own deployment — but all share the same code.</p>
+    <table>
+      <tr><th>Tenant</th><th><code>PARTNER</code></th><th><code>PARTNER_NAME</code></th><th>Domain</th><th>DB</th><th>Infra</th></tr>
+      <tr><td><strong>MzadQatar</strong></td><td><code>mzad</code></td><td>MzadQatar</td><td>mzadqatar.com</td><td>mzadqatar_live</td><td>Huawei Cloud</td></tr>
+      <tr><td><strong>Yemen Mazad</strong></td><td><code>yemen</code></td><td>YemenMazad</td><td>yemenmazad.com</td><td>2024yemenmazad</td><td>Huawei Cloud</td></tr>
+      <tr><td><strong>Mzady (Algeria)</strong></td><td><code>mzady</code></td><td>Mzady</td><td>emzad.com</td><td>emzadlive</td><td>Huawei Cloud</td></tr>
+      <tr><td><strong style="color:var(--maroon)">Government</strong></td><td><code style="color:var(--maroon);font-weight:700">government</code></td><td style="color:var(--maroon)">Government Auctions</td><td style="color:var(--maroon)">govauction.qa</td><td style="color:var(--maroon)">govauction_db</td><td style="color:var(--maroon)">Azure</td></tr>
+    </table>
+  </div>
+
+  <div class="sub">
+    <h3>Existing Partner Checks in Code (~15 files, ~38 checks)</h3>
+    <p>Partner-specific behavior is already handled via <code>config('app.partner')</code> in the API and <code>config('app.project')</code> in the Website:</p>
+    <table>
+      <tr><th>File</th><th>What It Switches</th><th>Current Partners</th><th>Government Needs</th></tr>
+      <tr><td><code>SendSMSTrait.php</code></td><td>SMS provider (Twilio / Enjazatik / SmsAlgerie)</td><td>mzad, yemen, mzady</td><td>Twilio with government sender ID</td></tr>
+      <tr><td><code>BidsController.php</code></td><td>Bank account IBAN for deposits</td><td>mzad, yemen</td><td>Government IBAN (Ministry of Finance)</td></tr>
+      <tr><td><code>UsersController.php</code></td><td>OTP resend message text</td><td>yemen</td><td>Government-specific message</td></tr>
+      <tr><td><code>ProductsController.php</code></td><td>Image compression for Yemen (low bandwidth)</td><td>yemen (15 checks)</td><td>Standard — same as mzad</td></tr>
+      <tr><td><code>CategoriesController.php</code></td><td>URL language (fr for Algeria)</td><td>mzady (4 checks)</td><td>Standard ar/en — same as mzad</td></tr>
+      <tr><td><code>PaymentController.php</code></td><td>Merchant reference prefix, billing info</td><td>all</td><td>Government payment config</td></tr>
+      <tr><td><code>NotificationsController.php</code></td><td>Auth check for non-mzad</td><td>mzad vs others</td><td>Same as mzad behavior</td></tr>
+      <tr><td><code>BannerPlansController.php</code></td><td>Yemen low-quality image handling</td><td>yemen</td><td>Standard — same as mzad</td></tr>
+      <tr><td><code>SetLocale.php</code> (API)</td><td>Carbon locale (fr for Algeria)</td><td>mzady</td><td>Standard ar/en</td></tr>
+      <tr><td><code>MzadyTranslationServiceProvider.php</code></td><td>Maps en→fr for Algeria</td><td>mzady only</td><td>Not needed — standard ar/en</td></tr>
+      <tr><td><code>config/cache.php</code></td><td>Cache key prefix</td><td>partner name</td><td>Automatic: <code>government</code></td></tr>
+      <tr><td><code>app.blade.php</code> (website)</td><td>WebEngage analytics (mzad only)</td><td>mzad</td><td>No WebEngage — government GTM only</td></tr>
+      <tr><td><code>SetLocale.php</code> (website)</td><td>Language code (fr for Algeria)</td><td>mzady</td><td>Standard ar/en</td></tr>
+      <tr><td><code>HandleInertiaRequests.php</code></td><td>Shared <code>project</code> prop to Vue</td><td>all</td><td><code>project: 'government'</code></td></tr>
+      <tr><td><code>Details.vue</code> (website)</td><td>SEO site_name in meta tags</td><td>mzad, yemen</td><td>"Government Auctions"</td></tr>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card green-border">
+      <div class="card-title">Why This Works</div>
+      <ul>
+        <li><strong>New MzadQatar feature → Government automatically</strong> — same codebase, same deploy image</li>
+        <li><strong>Government changes don't affect MzadQatar</strong> — routes and controllers isolated behind <code>PARTNER=government</code></li>
+        <li><strong>Proven pattern</strong> — Yemen + Algeria running this way for 2+ years</li>
+        <li><strong>One CI/CD pipeline</strong> — build once, deploy to multiple containers with different .env</li>
+        <li><strong>Easier maintenance</strong> — security patches, dependency updates apply to all tenants at once</li>
+      </ul>
+    </div>
+    <div class="card orange-border">
+      <div class="card-title">Government is Bigger Than Yemen/Algeria</div>
+      <ul>
+        <li>Yemen/Algeria: ~38 partner checks across 15 files (SMS, payments, locale)</li>
+        <li>Government: Same 15 files + <strong>8 new controllers</strong> + <strong>8 new DB tables</strong> + <strong>new routes file</strong> + <strong>17 dashboard screens</strong></li>
+        <li><strong>Solution:</strong> Isolate all government-specific code in dedicated folders:
+          <ul>
+            <li>API: <code>app/Http/Controllers/API/Government/</code></li>
+            <li>Routes: <code>routes/api_government.php</code> (loaded only when PARTNER=government)</li>
+            <li>Website: <code>resources/js/Pages/Admin/</code> (dashboard)</li>
+            <li>Migrations: <code>2026_04_xx_create_government_*</code></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Deployment Model: Same Image, Different Config</h3>
+    <div class="arch-diagram">
+      <div style="text-align:center;font-size:13px;font-weight:700;margin-bottom:16px;color:var(--gold)">SINGLE CODEBASE — MULTI-TENANT DEPLOYMENT</div>
+      <div class="arch-row" style="justify-content:center">
+        <div class="arch-box" style="background:rgba(255,255,255,0.15);max-width:400px">
+          <div class="icon">📦</div>
+          <div class="name">One Docker Image</div>
+          <div class="desc">mzadqatar-api:latest — built from master branch</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓ deployed to ↓</div>
+      <div class="arch-row">
+        <div class="arch-box" style="background:#0e7a0d">
+          <div class="icon">🇶🇦</div>
+          <div class="name">MzadQatar</div>
+          <div class="desc">PARTNER=mzad<br>Huawei Cloud<br>mzadqatar.com</div>
+        </div>
+        <div class="arch-box" style="background:#b91c1c">
+          <div class="icon">🇾🇪</div>
+          <div class="name">Yemen Mazad</div>
+          <div class="desc">PARTNER=yemen<br>Huawei Cloud<br>yemenmazad.com</div>
+        </div>
+        <div class="arch-box" style="background:#7c3aed">
+          <div class="icon">🇩🇿</div>
+          <div class="name">Mzady (Algeria)</div>
+          <div class="desc">PARTNER=mzady<br>Huawei Cloud<br>emzad.com</div>
+        </div>
+        <div class="arch-box" style="background:var(--maroon);border:2px solid var(--gold)">
+          <div class="icon">🏛</div>
+          <div class="name">Government</div>
+          <div class="desc">PARTNER=government<br>Azure (NEW)<br>govauction.qa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Route Isolation Pattern</h3>
+    <div class="code-block"><span class="comment">// app/Providers/RouteServiceProvider.php</span>
+<span class="comment">// Government-specific routes ONLY load when PARTNER=government</span>
+
+<span class="keyword">public function</span> <span class="func">boot</span>()
+{
+    parent::boot();
+}
+
+<span class="keyword">protected function</span> <span class="func">mapApiRoutes</span>()
+{
+    Route::prefix(<span class="string">'api'</span>)
+        ->middleware(<span class="string">'api'</span>)
+        ->group(base_path(<span class="string">'routes/api.php'</span>));
+
+    <span class="comment">// Government-only routes — never loaded for mzad/yemen/mzady</span>
+    <span class="keyword">if</span> (config(<span class="string">'app.partner'</span>) === <span class="string">'government'</span>) {
+        Route::prefix(<span class="string">'api'</span>)
+            ->middleware(<span class="string">'api'</span>)
+            ->group(base_path(<span class="string">'routes/api_government.php'</span>));
+    }
+}</div>
+  </div>
+
+  <div class="card navy-border">
+    <div class="card-title">Feature Sync Strategy</div>
+    <div class="grid-2">
+      <div>
+        <h4>New MzadQatar Feature → Government</h4>
+        <ol>
+          <li>Feature merged to MzadQatar <code>master</code></li>
+          <li>Same image deployed to all containers</li>
+          <li>If feature is partner-specific, it's behind <code>config('app.partner')</code> check</li>
+          <li>Government gets it automatically</li>
+        </ol>
+      </div>
+      <div>
+        <h4>Government-Only Feature</h4>
+        <ol>
+          <li>Code lives in <code>Government/</code> controller folder</li>
+          <li>Routes in <code>api_government.php</code> — loaded only when <code>PARTNER=government</code></li>
+          <li>No impact on MzadQatar — routes never register</li>
+          <li>No impact on Yemen/Algeria — same isolation</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ========== ARCHITECTURE ========== -->
 <div class="phase" id="arch">
@@ -426,46 +584,112 @@ p { margin-bottom:12px; font-size:13.5px; }
   </div>
 </div>
 
-<!-- ========== PHASE 1: FORK & DOCKERIZE ========== -->
+<!-- ========== PHASE 1: PARTNER CONFIG & DOCKER ========== -->
 <div class="phase" id="p1">
   <div class="phase-header">
     <div class="phase-num navy">P1</div>
-    <div class="phase-info"><h2>Fork MzadQatar & Dockerize</h2><div class="meta">Week 1 — Days 1-5 — Backend Lead + DevOps</div></div>
+    <div class="phase-info"><h2>Add PARTNER=government to Existing Codebase & Dockerize</h2><div class="meta">Week 1 — Days 1-5 — Backend Lead + DevOps</div></div>
   </div>
 
   <div class="sub">
-    <h3>What We Fork (3 Repositories) — From LIVE Branches</h3>
+    <h3>NO Fork — We Add to Existing Repos (Same as Yemen/Algeria)</h3>
     <div class="card azure-border" style="margin-bottom:14px">
-      <div class="card-title">IMPORTANT: Fork from Production (master), NOT feature branches</div>
-      <p>We fork the exact code currently running in production to ensure stability. Feature branches (like MouBranchSept2025) may have experimental changes that aren't battle-tested.</p>
+      <div class="card-title">IMPORTANT: Single codebase, NOT separate repos for API/Website</div>
+      <p>The government project uses the <strong>exact same repos</strong> as MzadQatar. We add <code>PARTNER=government</code> support directly to the <code>mzadqatar-api</code> and <code>mzad-new-website</code> repos on Bitbucket. <strong>Only mobile apps get separate repos</strong> (same pattern as Yemen/Algeria).</p>
     </div>
     <table>
-      <tr><th>Repo</th><th>Source (Bitbucket)</th><th>Live Branch</th><th>Latest</th><th>New (GitHub/Private)</th></tr>
-      <tr><td><strong>API</strong></td><td>mzadqatar-api</td><td><code>master</code> (HEAD)</td><td>Mar 9, 2026</td><td>gov-auction-api</td></tr>
-      <tr><td><strong>Website</strong></td><td>mzad-new-website</td><td><code>master</code> (HEAD)</td><td>Mar 10, 2026</td><td>gov-auction-website</td></tr>
-      <tr><td><strong>Socket</strong></td><td>Extract from API socket-server.js</td><td>—</td><td>—</td><td>gov-auction-socket</td></tr>
+      <tr><th>Component</th><th>Repo (Bitbucket)</th><th>Branch</th><th>Action</th></tr>
+      <tr><td><strong>API</strong></td><td><code>mzadqatar-api</code></td><td><code>master</code> (live)</td><td><span class="badge modify">Add</span> government controllers, routes, migrations to existing repo</td></tr>
+      <tr><td><strong>Website</strong></td><td><code>mzad-new-website</code></td><td><code>master</code> (live)</td><td><span class="badge modify">Add</span> government pages, dashboard, branding to existing repo</td></tr>
+      <tr><td><strong>Socket</strong></td><td>Extract from API <code>socket-server.js</code></td><td>—</td><td><span class="badge new">New repo</span> <code>gov-auction-socket</code> (for Azure deployment)</td></tr>
+      <tr><td><strong>iOS App</strong></td><td><code>mzadqatar-ios-new</code></td><td><code>master</code></td><td><span class="badge new">Fork</span> to <code>gov-auction-ios</code> (separate repo, same as Yemen)</td></tr>
+      <tr><td><strong>Android App</strong></td><td><code>mzadqatarandroid</code></td><td><code>master</code></td><td><span class="badge new">Fork</span> to <code>gov-auction-android</code> (separate repo, same as Yemen)</td></tr>
     </table>
-    <div class="code-block"><span class="comment"># Fork from live production branches</span>
-<span class="func">git</span> clone git@bitbucket.org:ebdaa/mzadqatar-api.git gov-auction-api
-<span class="keyword">cd</span> gov-auction-api
-<span class="func">git</span> checkout master                  <span class="comment"># ← LIVE branch (not MouBranchSept2025)</span>
-<span class="func">git</span> remote remove origin
-<span class="func">git</span> remote add origin git@github.com:ebdaa/gov-auction-api.git
+    <div class="code-block"><span class="comment"># Step 1: Create a working branch for government features</span>
+<span class="func">cd</span> mzadqatar-api
+<span class="func">git</span> checkout master
+<span class="func">git</span> checkout -b feature/government-auction
+<span class="comment"># All government code goes into this branch first, then merges to master</span>
+
+<span class="comment"># Step 2: Same for website</span>
+<span class="func">cd</span> mzad-new-website
+<span class="func">git</span> checkout master
+<span class="func">git</span> checkout -b feature/government-auction
+
+<span class="comment"># Step 3: Fork mobile apps (separate repos — same pattern as Yemen)</span>
+<span class="func">git</span> clone git@bitbucket.org:m_Afatah/mzadqatar-ios-new.git gov-auction-ios
+<span class="keyword">cd</span> gov-auction-ios && <span class="func">git</span> checkout master
+<span class="func">git</span> remote set-url origin git@bitbucket.org:m_Afatah/gov-auction-ios.git
 <span class="func">git</span> push -u origin master
 
-<span class="func">git</span> clone git@bitbucket.org:ebdaa/mzad-new-website.git gov-auction-website
-<span class="keyword">cd</span> gov-auction-website
-<span class="func">git</span> checkout master                  <span class="comment"># ← LIVE branch</span>
-<span class="func">git</span> remote remove origin
-<span class="func">git</span> remote add origin git@github.com:ebdaa/gov-auction-website.git
+<span class="func">git</span> clone git@bitbucket.org:m_Afatah/mzadqatarandroid.git gov-auction-android
+<span class="keyword">cd</span> gov-auction-android && <span class="func">git</span> checkout master
+<span class="func">git</span> remote set-url origin git@bitbucket.org:m_Afatah/gov-auction-android.git
+<span class="func">git</span> push -u origin master
+
+<span class="comment"># Step 4: Socket.io (new standalone repo for Azure container)</span>
+<span class="func">cp</span> mzadqatar-api/socket-server.js gov-auction-socket/
+<span class="func">cp</span> mzadqatar-api/package.json gov-auction-socket/
+<span class="keyword">cd</span> gov-auction-socket && <span class="func">git</span> init
+<span class="func">git</span> remote add origin git@bitbucket.org:m_Afatah/gov-auction-socket.git
 <span class="func">git</span> push -u origin master</div>
   </div>
 
   <div class="sub">
-    <h3>Database — Export from Live Production</h3>
+    <h3>Government .env Configuration</h3>
+    <div class="card maroon-border">
+      <div class="card-title">New .env file for the government deployment (Azure Container Apps)</div>
+      <p>Same codebase, different environment variables. This .env is used only for the Azure government deployment, while MzadQatar continues using its existing .env on Huawei Cloud.</p>
+    </div>
+    <div class="code-block"><span class="comment"># Government .env — Azure Container Apps</span>
+<span class="comment"># Same codebase as MzadQatar, different config</span>
+
+<span class="var">APP_ENV</span>=production
+<span class="var">APP_URL</span>=https://api.govauction.qa
+<span class="var">APP_URL_ADMIN</span>=https://admin.govauction.qa
+<span class="var">WEB_SITE_URL</span>=https://govauction.qa
+
+<span class="comment"># ★ THE KEY: Partner identification</span>
+<span class="var">PARTNER</span>=<span class="string">government</span>
+<span class="var">PARTNER_NAME</span>=<span class="string">Government Auctions</span>
+<span class="var">APP_PROJECT</span>=<span class="string">government</span>
+
+<span class="comment"># Separate database (Azure MySQL)</span>
+<span class="var">DB_HOST</span>=gov-auction-db.mysql.database.azure.com
+<span class="var">DB_DATABASE</span>=govauction_db
+<span class="var">DB_USERNAME</span>=govadmin
+<span class="var">DB_PASSWORD</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">MYSQL_SSL_CA</span>=/etc/ssl/certs/DigiCertGlobalRootCA.crt.pem
+
+<span class="comment"># Redis (Azure, TLS required)</span>
+<span class="var">REDIS_HOST</span>=gov-auction-redis.redis.cache.windows.net
+<span class="var">REDIS_PASSWORD</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">REDIS_PORT</span>=6380
+<span class="var">REDIS_SCHEME</span>=tls
+<span class="var">CACHE_PREFIX</span>=government
+
+<span class="comment"># Storage (Azure Blob, replaces OBS)</span>
+<span class="var">FILESYSTEM_DISK</span>=azure
+<span class="var">AZURE_STORAGE_NAME</span>=govauctionstg
+<span class="var">AZURE_STORAGE_KEY</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">AZURE_STORAGE_CONTAINER</span>=images
+
+<span class="comment"># Container-optimized drivers</span>
+<span class="var">SESSION_DRIVER</span>=redis
+<span class="var">QUEUE_CONNECTION</span>=redis
+<span class="var">LOG_CHANNEL</span>=stderr
+
+<span class="comment"># Twilio (Government sender)</span>
+<span class="var">TWILIO_SID</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">TWILIO_TOKEN</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">TWILIO_FROM</span>=+974XXXXXXXX</div>
+  </div>
+
+  <div class="sub">
+    <h3>Database — Export Schema from Live + Government Migrations</h3>
     <div class="card maroon-border">
       <div class="card-title">Export SCHEMA + SEED DATA from Live MySQL (192.168.0.149)</div>
-      <p>We need the live database schema (all tables, indexes, stored procedures) plus reference data (categories, settings, payment configs). <strong>NOT user data or bids</strong> — those are production-sensitive.</p>
+      <p>Government gets the same table structure as MzadQatar, plus 8 new government-specific tables via Laravel migrations. No user data or bids are copied.</p>
     </div>
     <div class="code-block"><span class="comment"># Step 1: Export schema-only from live production DB</span>
 <span class="func">mysqldump</span> -h 192.168.0.149 -u <span class="var">$DB_USER</span> -p --no-data \
@@ -480,120 +704,93 @@ p { margin-bottom:12px; font-size:13.5px; }
   bid_categories bid_types \
   > seed_data.sql
 
-<span class="comment"># Step 3: Import into local Docker MySQL</span>
-<span class="func">mysql</span> -h 127.0.0.1 -u root -p gov_auction < schema_live.sql
-<span class="func">mysql</span> -h 127.0.0.1 -u root -p gov_auction < seed_data.sql
+<span class="comment"># Step 3: Import into Azure MySQL (government DB)</span>
+<span class="func">mysql</span> -h gov-auction-db.mysql.database.azure.com -u govadmin -p \
+  govauction_db < schema_live.sql
+<span class="func">mysql</span> -h gov-auction-db.mysql.database.azure.com -u govadmin -p \
+  govauction_db < seed_data.sql
 
-<span class="comment"># Step 4: Run new government migration on top</span>
-<span class="func">php</span> artisan migrate  <span class="comment"># Creates 8 new gov tables</span>
-
-<span class="comment"># Key tables we need from live:</span>
-<span class="comment">#   Schema: users1, bid_products, bids, bid_info, auto_bids,</span>
-<span class="comment">#           bid_watch_lists, hold_amounts, request_refunds,</span>
-<span class="comment">#           lot_questions, categories, types, sub_types,</span>
-<span class="comment">#           payment_history, notifications, settings</span>
-<span class="comment">#   Seed:   categories, types, sub_types, countries, cities,</span>
-<span class="comment">#           payment_methods, bid_categories, settings</span></div>
+<span class="comment"># Step 4: Run government-specific migrations</span>
+<span class="func">php</span> artisan migrate  <span class="comment"># Creates 8 new government tables</span>
+<span class="comment"># These migrations are in the SHARED codebase but only matter for government DB</span></div>
   </div>
 
   <div class="sub">
-    <h3>What We KEEP from MzadQatar</h3>
+    <h3>What We Keep, Remove, and Add (API)</h3>
+    <div class="card azure-border" style="margin-bottom:14px">
+      <div class="card-title">NO CODE IS DELETED from the shared repo — it's just not used when PARTNER=government</div>
+      <p>Unlike a fork, we don't remove classified/shop controllers. They simply don't have routes when <code>PARTNER=government</code>. The government routes file (<code>api_government.php</code>) only registers auction endpoints. This means MzadQatar continues working exactly as before.</p>
+    </div>
     <div class="grid-2">
       <div class="card green-border">
-        <div class="card-title">API — Keep These Controllers</div>
+        <div class="card-title">Active When PARTNER=government</div>
         <table>
           <tr><th>Controller</th><th>Purpose</th></tr>
           <tr><td><code>AccessTokenController</code></td><td>OAuth + phone OTP login</td></tr>
           <tr><td><code>UsersController</code></td><td>Register, OTP, profile</td></tr>
-          <tr><td><code>bidding/BidsController</code></td><td>Place bid, auto-bid, Q&A, deposit, refund</td></tr>
+          <tr><td><code>bidding/BidsController</code></td><td>Place bid, auto-bid, Q&A, deposit</td></tr>
           <tr><td><code>bidding/BidAdsController</code></td><td>Lot listing, bid history</td></tr>
           <tr><td><code>bidding/BidCategoriesController</code></td><td>Bidding categories</td></tr>
           <tr><td><code>bidding/GetBiddingProductDetailsController</code></td><td>Lot details</td></tr>
           <tr><td><code>bidding/BidWatchListController</code></td><td>Watchlist</td></tr>
           <tr><td><code>PaymentController</code></td><td>Payfort/QNB payment</td></tr>
-          <tr><td><code>Payment/PayfortController</code></td><td>Bidding deposit payment</td></tr>
           <tr><td><code>NotificationsController</code></td><td>Push notifications</td></tr>
           <tr><td><code>CategoriesController</code></td><td>Categories (bidding only)</td></tr>
+          <tr><td colspan="2" style="background:var(--maroon-light);color:var(--maroon);font-weight:700;text-align:center">+ 8 NEW Government Controllers (see P3)</td></tr>
         </table>
       </div>
-      <div class="card green-border">
-        <div class="card-title">API — Keep These Models</div>
+      <div class="card" style="border-left:4px solid var(--gray-300)">
+        <div class="card-title">Inactive (no routes registered) When PARTNER=government</div>
         <table>
-          <tr><th>Model</th><th>Table</th></tr>
-          <tr><td><code>User</code></td><td>users1</td></tr>
-          <tr><td><code>BidProducts</code></td><td>bid_products</td></tr>
-          <tr><td><code>Bid</code></td><td>bids</td></tr>
-          <tr><td><code>BidInfo</code></td><td>bid_info</td></tr>
-          <tr><td><code>AutoBid</code></td><td>auto_bids</td></tr>
-          <tr><td><code>BidWatchList</code></td><td>bid_watch_lists</td></tr>
-          <tr><td><code>HoldAmounts</code></td><td>hold_amounts</td></tr>
-          <tr><td><code>RequestRefund</code></td><td>request_refunds</td></tr>
-          <tr><td><code>LotQuestion</code></td><td>lot_questions</td></tr>
-          <tr><td><code>Category</code></td><td>categories</td></tr>
-          <tr><td><code>PaymentHistory</code></td><td>payment_history</td></tr>
-          <tr><td><code>Notification</code></td><td>notifications</td></tr>
+          <tr><th>Controller</th><th>Still Works For</th></tr>
+          <tr><td><code>ProductsController</code> (classified)</td><td>mzad, yemen, mzady</td></tr>
+          <tr><td><code>AdvertisementsController</code></td><td>mzad, yemen, mzady</td></tr>
+          <tr><td><code>PlansController</code></td><td>mzad</td></tr>
+          <tr><td><code>ShopsController</code></td><td>mzad</td></tr>
+          <tr><td><code>ProductChatController</code></td><td>mzad</td></tr>
+          <tr><td><code>FollowsController</code></td><td>mzad</td></tr>
+          <tr><td colspan="2" style="text-align:center;color:var(--gray-400);font-size:11px">These controllers stay in the repo — just not routed for government</td></tr>
         </table>
       </div>
     </div>
   </div>
 
   <div class="sub">
-    <h3>What We REMOVE from MzadQatar (~40% of code)</h3>
-    <div class="card red-border">
-      <div class="card-title">API — Delete These Controllers & Models</div>
-      <table>
-        <tr><th>Remove</th><th>Reason</th></tr>
-        <tr><td><code>ProductsController</code> (classified)</td><td><span class="badge remove">Remove</span> No marketplace/classifieds</td></tr>
-        <tr><td><code>AdvertisementsController</code></td><td><span class="badge remove">Remove</span> No ad posting</td></tr>
-        <tr><td><code>PlansController</code></td><td><span class="badge remove">Remove</span> No subscription plans</td></tr>
-        <tr><td><code>ShopsController</code></td><td><span class="badge remove">Remove</span> No shops</td></tr>
-        <tr><td><code>ProductChatController</code></td><td><span class="badge remove">Remove</span> No AI chatbot</td></tr>
-        <tr><td><code>FollowsController</code></td><td><span class="badge remove">Remove</span> No social follows</td></tr>
-        <tr><td>All classified routes & views</td><td><span class="badge remove">Remove</span> Auction only</td></tr>
-        <tr><td>OpenSearch sync commands</td><td><span class="badge remove">Remove</span> MySQL search only</td></tr>
-        <tr><td>Ollama/GPU integration</td><td><span class="badge remove">Remove</span> No AI services</td></tr>
-        <tr><td>Firebase Analytics sync</td><td><span class="badge remove">Remove</span> Direct Firebase only</td></tr>
-      </table>
-    </div>
-  </div>
-
-  <div class="sub">
-    <h3>Website — Keep vs Remove</h3>
+    <h3>Website — Conditional Content via <code>project</code> Prop</h3>
     <div class="grid-2">
       <div class="card green-border">
-        <div class="card-title"><span class="badge keep">KEEP</span> Pages</div>
+        <div class="card-title"><span class="badge keep">Active</span> when project=government</div>
         <ul>
-          <li><code>Auth/Login.vue</code> — Phone + OTP</li>
-          <li><code>Auth/LoginOTP.vue</code> — OTP verify</li>
-          <li><code>Bidding/HomeBidding.vue</code> — Auction home</li>
-          <li><code>Bidding/Categories.vue</code> — Categories</li>
-          <li><code>Bidding/Details.vue</code> — Product detail</li>
-          <li><code>Bidding/MyBids.vue</code> — My bids</li>
-          <li><code>Bidding/WatchList.vue</code> — Watchlist</li>
-          <li><code>Bidding/Refund.vue</code> — Deposit refund</li>
-          <li><code>User/Home.vue</code> — User dashboard</li>
-          <li><code>User/Notifications.vue</code> — Notifications</li>
-          <li><code>User/Payment.vue</code> — Payment</li>
+          <li><code>Auth/Login.vue</code> — rebranded</li>
+          <li><code>Auth/LoginOTP.vue</code> — rebranded</li>
+          <li><code>Bidding/HomeBidding.vue</code> — government home</li>
+          <li><code>Bidding/Categories.vue</code> — categories</li>
+          <li><code>Bidding/Details.vue</code> — + Q&A, share, masking</li>
+          <li><code>Bidding/MyBids.vue</code> — rebranded</li>
+          <li><code>Bidding/WatchList.vue</code> — rebranded</li>
+          <li><code>User/Home.vue</code> — auction-focused</li>
+          <li><code>User/Payment.vue</code> — + Apple/Google Pay</li>
+          <li><code>Admin/*</code> — 17 NEW dashboard screens</li>
+          <li><code>Static/*</code> — Terms, FAQ, About, KYC, Invoice</li>
         </ul>
       </div>
-      <div class="card red-border">
-        <div class="card-title"><span class="badge remove">REMOVE</span> Pages</div>
+      <div class="card" style="border-left:4px solid var(--gray-300)">
+        <div class="card-title">Hidden when project=government</div>
         <ul>
-          <li><code>Classified/*</code> — All classified pages</li>
-          <li><code>Shop/*</code> — All shop pages</li>
-          <li><code>User/MyAds.vue</code> — No user ads</li>
-          <li><code>Search.vue</code> — Replace with auction search</li>
-          <li><code>AdvertiseAdd.vue</code> — No ad posting</li>
-          <li>All classified controllers/routes</li>
-          <li>ClassifiedService.php</li>
+          <li><code>Classified/*</code> — <code>v-if="project !== 'government'"</code></li>
+          <li><code>Shop/*</code> — hidden via route guards</li>
+          <li><code>User/MyAds.vue</code> — hidden</li>
+          <li>Classified nav links — conditionally hidden</li>
+          <li>Classified search — replaced with auction search</li>
         </ul>
+        <p style="font-size:11px;color:var(--gray-400);margin-top:8px">These pages stay in the repo and continue working for mzad/yemen/mzady. They're just hidden in the government deployment via Vue conditionals and Laravel route middleware.</p>
       </div>
     </div>
   </div>
 
   <div class="sub">
-    <h3>Dockerfiles</h3>
-    <div class="code-block"><span class="comment"># Dockerfile.api</span>
+    <h3>Dockerfiles (for Azure Government Deployment)</h3>
+    <div class="code-block"><span class="comment"># Dockerfile.api — shared image, same for all partners</span>
 <span class="keyword">FROM</span> php:8.2-fpm-alpine
 
 <span class="keyword">RUN</span> apk add --no-cache nginx supervisor \
@@ -609,7 +806,7 @@ p { margin-bottom:12px; font-size:13.5px; }
 <span class="keyword">EXPOSE</span> 80
 <span class="keyword">CMD</span> ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/app.conf"]</div>
 
-    <div class="code-block"><span class="comment"># Dockerfile.website</span>
+    <div class="code-block"><span class="comment"># Dockerfile.website — shared image</span>
 <span class="keyword">FROM</span> php:8.2-fpm-alpine
 
 <span class="keyword">RUN</span> apk add --no-cache nginx supervisor nodejs npm
@@ -622,7 +819,7 @@ p { margin-bottom:12px; font-size:13.5px; }
 <span class="keyword">EXPOSE</span> 80
 <span class="keyword">CMD</span> ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/app.conf"]</div>
 
-    <div class="code-block"><span class="comment"># Dockerfile.socketio</span>
+    <div class="code-block"><span class="comment"># Dockerfile.socketio — standalone for gov deployment</span>
 <span class="keyword">FROM</span> node:18-alpine
 
 <span class="keyword">WORKDIR</span> /app
@@ -639,9 +836,12 @@ p { margin-bottom:12px; font-size:13.5px; }
 <div class="phase" id="p2">
   <div class="phase-header">
     <div class="phase-num green">P2</div>
-    <div class="phase-info"><h2>9 Backend Code Changes for Azure</h2><div class="meta">Week 2 — Days 6-10 — Backend Dev</div></div>
+    <div class="phase-info"><h2>Backend Code Changes (Azure + Partner Config)</h2><div class="meta">Week 1-2 — Days 3-10 — Backend Dev</div></div>
   </div>
 
+  <div class="sub">
+    <h3>Part A: 9 Azure Infrastructure Changes</h3>
+  </div>
   <table>
     <tr><th>#</th><th>Change</th><th>File(s)</th><th>What</th><th>Effort</th></tr>
     <tr>
@@ -710,36 +910,77 @@ p { margin-bottom:12px; font-size:13.5px; }
   </table>
 
   <div class="sub">
-    <h3>Environment Variables (.env for Azure)</h3>
-    <div class="code-block"><span class="comment"># Azure-specific .env (NEVER commit — use Azure Key Vault)</span>
-
-<span class="comment"># Database</span>
-<span class="var">DB_HOST</span>=gov-auction-db.mysql.database.azure.com
-<span class="var">DB_DATABASE</span>=gov_auction
-<span class="var">DB_USERNAME</span>=govadmin
-<span class="var">DB_PASSWORD</span>=<span class="string">${KEY_VAULT_SECRET}</span>
-<span class="var">MYSQL_SSL_CA</span>=/etc/ssl/certs/DigiCertGlobalRootCA.crt.pem
-
-<span class="comment"># Redis (TLS)</span>
-<span class="var">REDIS_HOST</span>=gov-auction-redis.redis.cache.windows.net
-<span class="var">REDIS_PASSWORD</span>=<span class="string">${KEY_VAULT_SECRET}</span>
-<span class="var">REDIS_PORT</span>=6380
-<span class="var">REDIS_SCHEME</span>=tls
-
-<span class="comment"># Storage</span>
-<span class="var">FILESYSTEM_DISK</span>=azure
-<span class="var">AZURE_STORAGE_NAME</span>=govauctionstg
-<span class="var">AZURE_STORAGE_KEY</span>=<span class="string">${KEY_VAULT_SECRET}</span>
-<span class="var">AZURE_STORAGE_CONTAINER</span>=images
-
-<span class="comment"># Sessions & Queue</span>
-<span class="var">SESSION_DRIVER</span>=redis
-<span class="var">QUEUE_CONNECTION</span>=redis
-<span class="var">LOG_CHANNEL</span>=stderr
-
-<span class="comment"># App</span>
-<span class="var">APP_URL</span>=https://api.govauction.qa
-<span class="var">WEBSITE_URL</span>=https://govauction.qa</div>
+    <h3>Part B: Government Partner Checks (add to ~15 existing files)</h3>
+    <p>These are the existing <code>config('app.partner')</code> checks. For most, government behaves like <code>mzad</code> (standard). Only SMS, payments, and bank details need government-specific values.</p>
+    <table>
+      <tr><th>#</th><th>File</th><th>Change</th><th>Effort</th></tr>
+      <tr>
+        <td>10</td>
+        <td><code>SendSMSTrait.php</code></td>
+        <td>Add <code>elseif ($partner == 'government')</code> — use Twilio with government sender ID and messaging templates</td>
+        <td><span class="badge modify">1 hour</span></td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><code>BidsController.php</code></td>
+        <td>Add government bank account IBAN for deposit refunds. Add bidder masking logic: <code>(****XXX)</code> when <code>partner == 'government'</code></td>
+        <td><span class="badge modify">2 hours</span></td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><code>UsersController.php</code></td>
+        <td>Add government OTP message text. Add <code>bidder_type</code> field (individual/company) for government registration</td>
+        <td><span class="badge modify">2 hours</span></td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td><code>PaymentController.php</code></td>
+        <td>Add <code>'government'</code> prefix for merchant references. Configure government Payfort credentials via .env</td>
+        <td><span class="badge modify">1 hour</span></td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td><code>NotificationsController.php</code></td>
+        <td>Government behaves same as <code>mzad</code> — no change needed (already defaults correctly)</td>
+        <td><span class="badge keep">0</span></td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td><code>config/app.php</code></td>
+        <td>Already reads <code>env('PARTNER')</code> — automatic for <code>government</code></td>
+        <td><span class="badge keep">0</span></td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td><code>config/cache.php</code></td>
+        <td>Already uses partner as prefix — automatic for <code>government</code></td>
+        <td><span class="badge keep">0</span></td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td><code>RouteServiceProvider.php</code></td>
+        <td>Add conditional loading of <code>routes/api_government.php</code> when <code>PARTNER=government</code></td>
+        <td><span class="badge new">1 hour</span></td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td><code>app.blade.php</code> (website)</td>
+        <td>Add <code>@if(config('app.project') === 'government')</code> for government GTM key (no WebEngage)</td>
+        <td><span class="badge modify">30 min</span></td>
+      </tr>
+      <tr>
+        <td>19</td>
+        <td><code>HandleInertiaRequests.php</code></td>
+        <td>Already passes <code>project</code> prop — automatic. Government Vue components use <code>v-if="project === 'government'"</code></td>
+        <td><span class="badge keep">0</span></td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td><code>Details.vue</code> (website)</td>
+        <td>Add <code>project === 'government' ? 'Government Auctions' : ...</code> in SEO meta tags</td>
+        <td><span class="badge modify">30 min</span></td>
+      </tr>
+    </table>
   </div>
 </div>
 
@@ -747,7 +988,7 @@ p { margin-bottom:12px; font-size:13.5px; }
 <div class="phase" id="p3">
   <div class="phase-header">
     <div class="phase-num maroon">P3</div>
-    <div class="phase-info"><h2>New Government Features (Backend)</h2><div class="meta">Week 2-3 — Days 8-18 — Backend Dev</div></div>
+    <div class="phase-info"><h2>New Government Features (Added to Existing Codebase)</h2><div class="meta">Week 2-3 — Days 8-18 — Backend Dev — All in <code>app/Http/Controllers/API/Government/</code></div></div>
   </div>
 
   <div class="sub">
@@ -881,8 +1122,119 @@ p { margin-bottom:12px; font-size:13.5px; }
       <tr><td>GET</td><td>/api/compliance/sla</td><td><span class="badge new">ComplianceController</span></td><td>SLA adherence metrics</td></tr>
       <tr><td>GET</td><td>/api/reports/monthly</td><td><span class="badge new">ReportController</span></td><td>Monthly report data</td></tr>
       <tr><td>GET</td><td>/api/audit-log</td><td><span class="badge new">AuditController</span></td><td>Audit trail</td></tr>
-      <tr><td colspan="4" style="text-align:center;color:var(--gray-400);font-size:11px">+ existing MzadQatar bidding endpoints (keep as-is)</td></tr>
+      <tr><td colspan="4" style="text-align:center;color:var(--gray-400);font-size:11px">+ existing MzadQatar bidding endpoints (keep as-is, loaded from routes/api.php)</td></tr>
     </table>
+  </div>
+
+  <div class="sub">
+    <h3>routes/api_government.php — Complete Route File</h3>
+    <div class="card azure-border">
+      <div class="card-title">This file is ONLY loaded when PARTNER=government (see RouteServiceProvider)</div>
+      <p>All routes here use the <code>Government\</code> controller namespace. Existing bidding routes from <code>routes/api.php</code> still load — they're shared across all partners.</p>
+    </div>
+    <div class="code-block"><span class="comment">// routes/api_government.php</span>
+<span class="comment">// Loaded conditionally in RouteServiceProvider when PARTNER=government</span>
+
+<span class="keyword">use</span> App\Http\Controllers\API\Government\GovernmentEntityController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\PipelineController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\ValuationController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\DisputeController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\KYCController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\InvoiceController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\ComplianceController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\ReportController;
+<span class="keyword">use</span> App\Http\Controllers\API\Government\AuditController;
+
+<span class="comment">// Government Entities</span>
+Route::apiResource(<span class="string">'entities'</span>, GovernmentEntityController::class);
+Route::get(<span class="string">'entities/{id}/users'</span>, [GovernmentEntityController::class, <span class="string">'users'</span>]);
+Route::post(<span class="string">'entities/{id}/users'</span>, [GovernmentEntityController::class, <span class="string">'assignUser'</span>]);
+
+<span class="comment">// Auction Pipeline (workflow stages)</span>
+Route::get(<span class="string">'pipeline'</span>, [PipelineController::class, <span class="string">'index'</span>]);
+Route::get(<span class="string">'pipeline/{id}'</span>, [PipelineController::class, <span class="string">'show'</span>]);
+Route::put(<span class="string">'pipeline/{id}/stage'</span>, [PipelineController::class, <span class="string">'advanceStage'</span>]);
+Route::post(<span class="string">'pipeline'</span>, [PipelineController::class, <span class="string">'create'</span>]);
+Route::get(<span class="string">'pipeline/stats'</span>, [PipelineController::class, <span class="string">'stats'</span>]);
+
+<span class="comment">// Asset Valuations</span>
+Route::apiResource(<span class="string">'valuations'</span>, ValuationController::class);
+Route::put(<span class="string">'valuations/{id}/approve'</span>, [ValuationController::class, <span class="string">'approve'</span>]);
+Route::put(<span class="string">'valuations/{id}/reject'</span>, [ValuationController::class, <span class="string">'reject'</span>]);
+
+<span class="comment">// Disputes</span>
+Route::apiResource(<span class="string">'disputes'</span>, DisputeController::class);
+Route::put(<span class="string">'disputes/{id}/resolve'</span>, [DisputeController::class, <span class="string">'resolve'</span>]);
+Route::put(<span class="string">'disputes/{id}/escalate'</span>, [DisputeController::class, <span class="string">'escalate'</span>]);
+
+<span class="comment">// KYC (winner identity verification)</span>
+Route::post(<span class="string">'kyc'</span>, [KYCController::class, <span class="string">'submit'</span>]);
+Route::get(<span class="string">'kyc/{id}'</span>, [KYCController::class, <span class="string">'show'</span>]);
+Route::put(<span class="string">'kyc/{id}/approve'</span>, [KYCController::class, <span class="string">'approve'</span>]);
+Route::put(<span class="string">'kyc/{id}/reject'</span>, [KYCController::class, <span class="string">'reject'</span>]);
+Route::get(<span class="string">'kyc/pending'</span>, [KYCController::class, <span class="string">'pending'</span>]);
+
+<span class="comment">// Invoices</span>
+Route::apiResource(<span class="string">'invoices'</span>, InvoiceController::class);
+Route::post(<span class="string">'invoices/{id}/pdf'</span>, [InvoiceController::class, <span class="string">'generatePdf'</span>]);
+Route::put(<span class="string">'invoices/{id}/mark-paid'</span>, [InvoiceController::class, <span class="string">'markPaid'</span>]);
+
+<span class="comment">// Compliance Dashboard</span>
+Route::get(<span class="string">'compliance/overview'</span>, [ComplianceController::class, <span class="string">'overview'</span>]);
+Route::get(<span class="string">'compliance/sla'</span>, [ComplianceController::class, <span class="string">'slaMetrics'</span>]);
+Route::get(<span class="string">'compliance/alerts'</span>, [ComplianceController::class, <span class="string">'alerts'</span>]);
+
+<span class="comment">// Reports</span>
+Route::get(<span class="string">'reports/monthly'</span>, [ReportController::class, <span class="string">'monthly'</span>]);
+Route::get(<span class="string">'reports/entity/{id}'</span>, [ReportController::class, <span class="string">'byEntity'</span>]);
+Route::get(<span class="string">'reports/export'</span>, [ReportController::class, <span class="string">'export'</span>]);
+
+<span class="comment">// Audit Log</span>
+Route::get(<span class="string">'audit-log'</span>, [AuditController::class, <span class="string">'index'</span>]);
+Route::get(<span class="string">'audit-log/{id}'</span>, [AuditController::class, <span class="string">'show'</span>]);</div>
+  </div>
+
+  <div class="sub">
+    <h3>Controller Structure — Key Methods</h3>
+    <div class="grid-2">
+      <div class="card green-border">
+        <div class="card-title">GovernmentEntityController</div>
+        <ul>
+          <li><code>index()</code> — List entities with filter/search</li>
+          <li><code>store()</code> — Create entity (admin only)</li>
+          <li><code>show()</code> — Entity detail + stats</li>
+          <li><code>update()</code> — Edit entity info</li>
+          <li><code>users()</code> — List users in entity</li>
+          <li><code>assignUser()</code> — Assign user with role</li>
+        </ul>
+      </div>
+      <div class="card green-border">
+        <div class="card-title">PipelineController</div>
+        <ul>
+          <li><code>index()</code> — All auctions by stage (Kanban)</li>
+          <li><code>show()</code> — Full pipeline detail</li>
+          <li><code>create()</code> — Start new pipeline</li>
+          <li><code>advanceStage()</code> — Move to next stage with validation</li>
+          <li><code>stats()</code> — Pipeline metrics (avg time per stage, SLA)</li>
+        </ul>
+      </div>
+      <div class="card green-border">
+        <div class="card-title">ComplianceController</div>
+        <ul>
+          <li><code>overview()</code> — Dashboard KPIs (total auctions, revenue, completion rate, avg bid time)</li>
+          <li><code>slaMetrics()</code> — Per-stage SLA adherence</li>
+          <li><code>alerts()</code> — Overdue items, SLA breaches</li>
+        </ul>
+      </div>
+      <div class="card green-border">
+        <div class="card-title">AuditController</div>
+        <ul>
+          <li><code>index()</code> — Searchable, paginated audit log</li>
+          <li><code>show()</code> — Full change detail with diff</li>
+          <li>Auto-logged via <code>AuditLogMiddleware</code> on all government routes</li>
+        </ul>
+      </div>
+    </div>
   </div>
 
   <div class="sub">
@@ -1072,14 +1424,45 @@ p { margin-bottom:12px; font-size:13.5px; }
   </table>
 
   <div class="card blue-border" style="margin-top:14px">
-    <div class="card-title">Website Services to Keep & Modify</div>
+    <div class="card-title">CSS Variable System for Per-Tenant Branding</div>
+    <p>The website uses CSS variables that switch based on the <code>project</code> prop. This means a single stylesheet serves all tenants, with the government branding applied conditionally.</p>
+    <div class="code-block"><span class="comment">/* public/frontend/scss/_brand.scss — shared brand variables */</span>
+
+<span class="comment">/* Default (MzadQatar) */</span>
+:root {
+  --brand-primary: <span class="string">#FF6B00</span>;
+  --brand-primary-light: <span class="string">#FFF4EB</span>;
+  --brand-accent: <span class="string">#1a1a2e</span>;
+  --brand-font-ar: <span class="string">'Droid Arabic Kufi', sans-serif</span>;
+  --brand-font-en: <span class="string">'Inter', sans-serif</span>;
+}
+
+<span class="comment">/* Government tenant — applied via body class */</span>
+body.project-government {
+  --brand-primary: <span class="string">#8A1538</span>;           <span class="comment">/* Pantone 1955 C */</span>
+  --brand-primary-light: <span class="string">#f5e8ec</span>;
+  --brand-accent: <span class="string">#C5A572</span>;            <span class="comment">/* Gold accent */</span>
+  --brand-font-ar: <span class="string">'Noto Kufi Arabic', sans-serif</span>;
+  --brand-font-en: <span class="string">'Inter', sans-serif</span>;
+}
+
+<span class="comment">/* All components use var(--brand-primary) — auto-switches per tenant */</span>
+.btn-primary { background: var(--brand-primary); }
+.header { border-color: var(--brand-primary); }
+.price { color: var(--brand-primary); }</div>
+    <div class="code-block"><span class="comment">&lt;!-- app.blade.php — adds body class based on project --&gt;</span>
+&lt;body class="<span class="string">project-{{ config('app.project') }}</span>"&gt;</div>
+  </div>
+
+  <div class="card blue-border" style="margin-top:14px">
+    <div class="card-title">Website Services — Shared Code, Conditional Behavior</div>
     <table>
       <tr><th>Service</th><th>Action</th></tr>
-      <tr><td><code>BiddingService.php</code></td><td><span class="badge keep">Keep</span> — Core auction logic (lot details, categories, credit, bank accounts)</td></tr>
-      <tr><td><code>ClassifiedService.php</code></td><td><span class="badge remove">Remove</span> — No classifieds</td></tr>
-      <tr><td><code>helpers.php</code> (<code>perform_curl</code>)</td><td><span class="badge modify">Modify</span> — Point to new Azure API URL</td></tr>
-      <tr><td><code>AppServiceProvider.php</code></td><td><span class="badge modify">Modify</span> — Update <code>Http::mzadApi()</code> base URL</td></tr>
-      <tr><td><code>BiddingController.php</code></td><td><span class="badge modify">Modify</span> — Government entity context, branding</td></tr>
+      <tr><td><code>BiddingService.php</code></td><td><span class="badge keep">Shared</span> — Core auction logic, works for all tenants</td></tr>
+      <tr><td><code>ClassifiedService.php</code></td><td><span class="badge keep">Shared</span> — Not called when project=government (no classified routes)</td></tr>
+      <tr><td><code>helpers.php</code> (<code>perform_curl</code>)</td><td><span class="badge keep">Shared</span> — Already reads APP_URL from .env (automatic per tenant)</td></tr>
+      <tr><td><code>AppServiceProvider.php</code></td><td><span class="badge keep">Shared</span> — <code>Http::mzadApi()</code> already uses <code>config('app.url')</code></td></tr>
+      <tr><td><code>BiddingController.php</code></td><td><span class="badge modify">+gov branding</span> — Pass entity context when project=government</td></tr>
     </table>
   </div>
 </div>
@@ -1106,31 +1489,43 @@ p { margin-bottom:12px; font-size:13.5px; }
       </table>
     </div>
     <div class="card">
-      <div class="card-title">Azure Deployment Pipeline</div>
-      <div class="code-block"><span class="comment"># GitHub Actions → Azure Container Apps</span>
-<span class="keyword">name</span>: Deploy to Azure
+      <div class="card-title">Azure Deployment Pipeline (Single Image → Multiple Tenants)</div>
+      <div class="code-block"><span class="comment"># GitHub Actions → Build ONE image → Deploy to government Azure + (optionally) MzadQatar</span>
+<span class="keyword">name</span>: Deploy to Azure (Government)
 
 <span class="keyword">on</span>:
   push:
-    branches: [main]
+    branches: [master]  <span class="comment"># Shared codebase — same branch for all tenants</span>
 
 <span class="keyword">jobs</span>:
-  <span class="func">deploy</span>:
+  <span class="func">build</span>:
     steps:
       - <span class="func">checkout</span>
-      - <span class="func">az login</span> (service principal)
-      - <span class="func">docker build</span> -t govauction.azurecr.io/api
-      - <span class="func">docker push</span> govauction.azurecr.io/api
+      - <span class="func">docker build</span> -t govauction.azurecr.io/api:$GITHUB_SHA .
+      - <span class="func">docker push</span> govauction.azurecr.io/api:$GITHUB_SHA
+
+  <span class="func">deploy-government</span>:
+    needs: build
+    steps:
       - <span class="func">az containerapp update</span> \
-          --name api \
-          --image govauction.azurecr.io/api:latest</div>
+          --name gov-api \
+          --resource-group rg-gov-auction \
+          --image govauction.azurecr.io/api:$GITHUB_SHA
+      <span class="comment"># Government .env is stored in Azure Container Apps secrets</span>
+      <span class="comment"># PARTNER=government is set via --env-vars</span>
+
+<span class="comment"># MzadQatar continues deploying on Huawei Cloud via its own pipeline</span>
+<span class="comment"># Yemen/Algeria deploy on Huawei Cloud via their own pipelines</span>
+<span class="comment"># All use the SAME codebase, different .env</span></div>
     </div>
   </div>
 
   <div class="sub">
     <h3>Go-Live Checklist</h3>
     <ol>
-      <li>All containers deployed to Azure Container Apps (Qatar Central)</li>
+      <li><strong>Merge <code>feature/government-auction</code> to <code>master</code></strong> — all tenants get the code, only government activates new features</li>
+      <li>All containers deployed to Azure Container Apps (Qatar Central) with PARTNER=government</li>
+      <li>Verify MzadQatar, Yemen, Algeria still working (no regression from shared code)</li>
       <li>MySQL Flexible Server — data migrated, indexes optimized</li>
       <li>Redis Cache — TLS verified, sessions working</li>
       <li>Blob Storage — images CDN-backed via Cloudflare</li>
@@ -1223,9 +1618,9 @@ p { margin-bottom:12px; font-size:13.5px; }
     <!-- Track 2: Backend -->
     <tr><td colspan="43" style="background:var(--green-light);font-weight:800;color:var(--green);padding:8px 12px;font-size:12px">TRACK 2: Backend API (Laravel)</td></tr>
     <tr>
-      <td style="font-weight:600">Fork + clean (~40%)</td>
-      <td colspan="4" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Remove classifieds/shops</span></td>
-      <td colspan="38"></td>
+      <td style="font-weight:600">Create feature branch</td>
+      <td colspan="2" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">feature/government-auction</span></td>
+      <td colspan="40"></td>
     </tr>
     <tr>
       <td style="font-weight:600">9 Azure code changes</td>
@@ -1234,9 +1629,9 @@ p { margin-bottom:12px; font-size:13.5px; }
       <td colspan="35"></td>
     </tr>
     <tr>
-      <td style="font-weight:600">8 new DB tables</td>
+      <td style="font-weight:600">Add partner checks</td>
       <td colspan="4"></td>
-      <td colspan="2" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Migrate</span></td>
+      <td colspan="2" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Gov cases</span></td>
       <td colspan="36"></td>
     </tr>
     <tr>
@@ -1267,9 +1662,9 @@ p { margin-bottom:12px; font-size:13.5px; }
     <!-- Track 3: Frontend -->
     <tr><td colspan="43" style="background:var(--purple-light);font-weight:800;color:var(--purple);padding:8px 12px;font-size:12px">TRACK 3: Website + Admin Dashboard (Vue 3)</td></tr>
     <tr>
-      <td style="font-weight:600">Fork + clean website</td>
-      <td colspan="3" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Remove classified/shop</span></td>
-      <td colspan="39"></td>
+      <td style="font-weight:600">Create feature branch</td>
+      <td colspan="2" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">feature/government-auction</span></td>
+      <td colspan="40"></td>
     </tr>
     <tr>
       <td style="font-weight:600">Ministry branding</td>
@@ -1305,8 +1700,8 @@ p { margin-bottom:12px; font-size:13.5px; }
     <!-- Track 4: Mobile -->
     <tr><td colspan="43" style="background:var(--orange-light);font-weight:800;color:var(--orange);padding:8px 12px;font-size:12px">TRACK 4: Mobile Apps (iOS + Android)</td></tr>
     <tr>
-      <td style="font-weight:600">Fork + clean code</td>
-      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Remove classifieds/shops/chatbot</span></td>
+      <td style="font-weight:600">Fork + clean mobile</td>
+      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Fork iOS+Android, strip classifieds</span></td>
       <td colspan="37"></td>
     </tr>
     <tr>
@@ -1398,20 +1793,20 @@ p { margin-bottom:12px; font-size:13.5px; }
       <div class="card azure-border">
         <div class="card-title">Week 1 (Days 1-7) — Foundation</div>
         <ul>
-          <li><strong>All tracks</strong>: Fork from <code>master</code> (live), clean classified code</li>
+          <li><strong>All tracks</strong>: Create <code>feature/government-auction</code> branches on existing API + website repos</li>
           <li><strong>DevOps</strong>: Azure resources, Dockerfiles, docker-compose, DB schema+seed export from live (192.168.0.149)</li>
-          <li><strong>Backend</strong>: Remove ~40% code, 9 Azure code changes (Redis TLS, Blob, MySQL SSL, sessions, queue, logs), 8 new DB tables via migrations</li>
-          <li><strong>Frontend</strong>: Fork + clean website, start ministry branding (maroon #8A1538, Noto Kufi Arabic, logos)</li>
-          <li><strong>Mobile</strong>: Fork + clean iOS/Android, remove classified/shop/chatbot VCs, start branding (icons, splash, tabs, colors)</li>
+          <li><strong>Backend</strong>: Add <code>PARTNER=government</code> to ~15 partner checks, add <code>api_government.php</code> routes, 9 Azure code changes (Redis TLS, Blob, MySQL SSL), 8 new DB table migrations</li>
+          <li><strong>Frontend</strong>: Start ministry branding (maroon #8A1538, Noto Kufi Arabic, conditional <code>v-if="project==='government'"</code>)</li>
+          <li><strong>Mobile</strong>: Fork iOS/Android repos (same as Yemen), strip classified/shop/chatbot, start branding (icons, splash, tabs, colors)</li>
         </ul>
-        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: All repos forked, cleaned, running locally via Docker. New database schema ready.</p>
+        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: Feature branches ready, partner config added, running locally via Docker. New database schema ready.</p>
       </div>
       <div class="card green-border">
         <div class="card-title">Week 2 (Days 8-14) — Core Backend + Branding</div>
         <ul>
           <li><strong>DevOps</strong>: CI/CD pipeline (GitHub Actions to Azure Container Apps)</li>
-          <li><strong>Backend</strong>: Build 17 new API endpoints (GovernmentEntity, Pipeline, Valuation, Dispute, KYC, Invoice, Compliance, Report, Audit) — aim for 10 done by end of week</li>
-          <li><strong>Frontend</strong>: Complete website rebranding (12 pages), start admin dashboard scaffold (layout, sidebar, routing)</li>
+          <li><strong>Backend</strong>: Build 17 new API endpoints in <code>Government/</code> folder (GovernmentEntity, Pipeline, Valuation, Dispute, KYC, Invoice, Compliance, Report, Audit) — aim for 10 done by end of week</li>
+          <li><strong>Frontend</strong>: Add government branding conditionals to 12 existing pages (<code>v-if="project==='government'"</code>), start admin dashboard scaffold (layout, sidebar, routing in <code>Pages/Admin/</code>)</li>
           <li><strong>Mobile</strong>: Complete branding, begin modifying existing screens (product detail: masking, Q&A, bid bar, action buttons, 300px gallery)</li>
         </ul>
         <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Milestone: Website rebranded. Most backend APIs available for frontend integration.</p>
@@ -1430,7 +1825,7 @@ p { margin-bottom:12px; font-size:13.5px; }
         <div class="card-title">Week 4 (Days 22-28) — Complete + Integrate</div>
         <ul>
           <li><strong>Backend</strong>: Unit + integration tests. Bug fixes from frontend/mobile integration feedback</li>
-          <li><strong>Frontend</strong>: Complete remaining 7 dashboard screens (Price Review, Auction Detail admin, User Management, Categories, Permissions, Notifications, Search) + 5 new website pages (Terms, FAQ, About, KYC, Invoice)</li>
+          <li><strong>Frontend</strong>: Complete remaining 7 dashboard screens (Price Review, Auction Detail admin, User Management, Categories, Permissions, Notifications, Search) + 5 new pages in <code>Pages/Static/</code> (Terms, FAQ, About, KYC, Invoice)</li>
           <li><strong>Mobile</strong>: SharePopup, HelpFAB, MoreMenu, connect all screens to Azure staging API</li>
           <li><strong>QA starts</strong>: E2E testing begins — full registration-to-bid-to-win-to-pay flow on staging</li>
         </ul>
@@ -1463,6 +1858,7 @@ p { margin-bottom:12px; font-size:13.5px; }
     <div class="card-title">Critical Dependencies (things that block other tracks)</div>
     <table>
       <tr><th>Blocker</th><th>Blocks</th><th>When Needed</th></tr>
+      <tr><td>Feature branch created on API + website</td><td>Backend can't start adding government code</td><td>Day 1</td></tr>
       <tr><td>DB export from live (schema + seed)</td><td>Backend can't test locally</td><td>Day 1-2</td></tr>
       <tr><td>docker-compose working</td><td>All devs need local env</td><td>Day 3</td></tr>
       <tr><td>Firebase project created</td><td>Push notifications (mobile + backend)</td><td>Day 10</td></tr>
@@ -1477,9 +1873,9 @@ p { margin-bottom:12px; font-size:13.5px; }
 
   <div class="card" style="border-left:4px solid var(--gray-700);margin-top:14px">
     <div class="card-title">Critical Path (minimum time chain)</div>
-    <div class="code-block" style="background:var(--gray-100);color:var(--gray-800);font-size:13px;line-height:2">DB Export (D1-2) → Backend APIs (D8-21) → Dashboard Integration (D15-28) → QA E2E (D22-35) → UAT (D36-40) → GO LIVE (D42)
+    <div class="code-block" style="background:var(--gray-100);color:var(--gray-800);font-size:13px;line-height:2">Feature Branch (D1) → Partner Config (D1-3) → Gov APIs (D8-21) → Dashboard Integration (D15-28) → QA E2E (D22-35) → UAT (D36-40) → Merge to master + GO LIVE (D42)
 
-<span class="comment">This chain is 42 days — exactly 6 weeks. Compressing further adds significant risk.</span></div>
+<span class="comment">This chain is 42 days — exactly 6 weeks. Merging to master deploys to all tenants (same image, different .env).</span></div>
   </div>
 </div>
 
@@ -1521,34 +1917,32 @@ p { margin-bottom:12px; font-size:13.5px; }
 <div class="phase" id="files">
   <div class="phase-header">
     <div class="phase-num navy">📁</div>
-    <div class="phase-info"><h2>Complete File Map: MzadQatar → Government Fork</h2><div class="meta">What we take, remove, modify, and build new</div></div>
+    <div class="phase-info"><h2>Complete File Map: What Gets Added to Existing MzadQatar Repos</h2><div class="meta">No fork — new files added alongside existing code. Existing files untouched unless marked MODIFY.</div></div>
   </div>
 
   <div class="sub">
-    <h3>API Repository</h3>
+    <h3>API Repository (<code>mzadqatar-api</code> — EXISTING, shared with all tenants)</h3>
     <div class="file-tree">
-<span class="dir">gov-auction-api/</span>
+<span class="dir">mzadqatar-api/</span>                                  <span style="color:var(--gray-400)">(shared repo — NOT a fork)</span>
 ├── <span class="dir">app/Http/Controllers/API/</span>
-│   ├── <span class="file">AccessTokenController.php</span>          <span class="badge keep">Keep</span>
-│   ├── <span class="file">UsersController.php</span>                <span class="badge modify">Modify</span> (bidder_type, GCC)
-│   ├── <span class="file">CategoriesController.php</span>           <span class="badge keep">Keep</span>
-│   ├── <span class="file">NotificationsController.php</span>        <span class="badge modify">Modify</span>
-│   ├── <span class="file">PaymentController.php</span>              <span class="badge modify">Modify</span>
-│   ├── <span class="del">ProductsController.php</span>             <span class="badge remove">Remove</span>
-│   ├── <span class="del">AdvertisementsController.php</span>       <span class="badge remove">Remove</span>
-│   ├── <span class="del">PlansController.php</span>                <span class="badge remove">Remove</span>
-│   ├── <span class="del">ShopsController.php</span>                <span class="badge remove">Remove</span>
-│   ├── <span class="del">FollowsController.php</span>              <span class="badge remove">Remove</span>
-│   ├── <span class="del">ProductChatController.php</span>          <span class="badge remove">Remove</span>
+│   ├── <span class="file">AccessTokenController.php</span>          <span class="badge keep">Shared</span>
+│   ├── <span class="file">UsersController.php</span>                <span class="badge modify">+government case</span> (bidder_type, OTP)
+│   ├── <span class="file">CategoriesController.php</span>           <span class="badge keep">Shared</span>
+│   ├── <span class="file">NotificationsController.php</span>        <span class="badge keep">Shared</span>
+│   ├── <span class="file">PaymentController.php</span>              <span class="badge modify">+government case</span> (merchant ref)
+│   ├── <span class="file">ProductsController.php</span>             <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(inactive for government)</span>
+│   ├── <span class="file">AdvertisementsController.php</span>       <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(inactive for government)</span>
+│   ├── <span class="file">PlansController.php</span>                <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(inactive for government)</span>
+│   ├── <span class="file">ShopsController.php</span>                <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(inactive for government)</span>
 │   ├── <span class="dir">bidding/</span>
-│   │   ├── <span class="file">BidsController.php</span>             <span class="badge modify">Modify</span> (masking, entity_id)
-│   │   ├── <span class="file">BidAdsController.php</span>           <span class="badge modify">Modify</span>
-│   │   ├── <span class="file">BidCategoriesController.php</span>    <span class="badge keep">Keep</span>
-│   │   ├── <span class="file">GetBiddingProductDetailsController.php</span> <span class="badge keep">Keep</span>
-│   │   └── <span class="file">BidWatchListController.php</span>     <span class="badge keep">Keep</span>
+│   │   ├── <span class="file">BidsController.php</span>             <span class="badge modify">+government case</span> (masking, entity_id, IBAN)
+│   │   ├── <span class="file">BidAdsController.php</span>           <span class="badge modify">+entity filter</span>
+│   │   ├── <span class="file">BidCategoriesController.php</span>    <span class="badge keep">Shared</span>
+│   │   ├── <span class="file">GetBiddingProductDetailsController.php</span> <span class="badge keep">Shared</span>
+│   │   └── <span class="file">BidWatchListController.php</span>     <span class="badge keep">Shared</span>
 │   ├── <span class="dir">Payment/</span>
-│   │   └── <span class="file">PayfortController.php</span>          <span class="badge modify">Modify</span> (Apple/Google Pay)
-│   └── <span class="new">Government/</span>                        <span class="badge new">NEW FOLDER</span>
+│   │   └── <span class="file">PayfortController.php</span>          <span class="badge modify">+Apple/Google Pay</span>
+│   └── <span class="new">Government/</span>                        <span class="badge new">NEW FOLDER — Gov only</span>
 │       ├── <span class="new">GovernmentEntityController.php</span>
 │       ├── <span class="new">PipelineController.php</span>
 │       ├── <span class="new">ValuationController.php</span>
@@ -1559,9 +1953,9 @@ p { margin-bottom:12px; font-size:13.5px; }
 │       ├── <span class="new">ReportController.php</span>
 │       └── <span class="new">AuditController.php</span>
 ├── <span class="dir">app/Models/</span>
-│   ├── <span class="file">User.php</span>                           <span class="badge modify">Modify</span>
-│   ├── <span class="file">BidProducts.php</span>                    <span class="badge modify">Modify</span> (entity_id, valuation)
-│   ├── <span class="file">Bid.php, AutoBid.php</span>               <span class="badge keep">Keep</span>
+│   ├── <span class="file">User.php</span>                           <span class="badge modify">+bidder_type</span>
+│   ├── <span class="file">BidProducts.php</span>                    <span class="badge modify">+entity_id, valuation</span>
+│   ├── <span class="file">Bid.php, AutoBid.php, etc.</span>         <span class="badge keep">Shared</span>
 │   ├── <span class="new">GovernmentEntity.php</span>               <span class="badge new">New</span>
 │   ├── <span class="new">AuctionPipeline.php</span>                <span class="badge new">New</span>
 │   ├── <span class="new">AssetValuation.php</span>                 <span class="badge new">New</span>
@@ -1569,13 +1963,22 @@ p { margin-bottom:12px; font-size:13.5px; }
 │   ├── <span class="new">WinnerKYC.php</span>                      <span class="badge new">New</span>
 │   ├── <span class="new">Invoice.php</span>                        <span class="badge new">New</span>
 │   └── <span class="new">AuditLog.php</span>                       <span class="badge new">New</span>
+├── <span class="dir">app/Http/Traits/</span>
+│   └── <span class="file">SendSMSTrait.php</span>                   <span class="badge modify">+government case</span>
+├── <span class="dir">app/Providers/</span>
+│   └── <span class="file">RouteServiceProvider.php</span>           <span class="badge modify">+conditional gov routes</span>
 ├── <span class="dir">config/</span>
-│   ├── <span class="file">database.php</span>                       <span class="badge modify">Modify</span> (Redis TLS, MySQL SSL)
-│   ├── <span class="file">filesystems.php</span>                    <span class="badge modify">Modify</span> (Azure Blob)
-│   └── <span class="file">logging.php</span>                        <span class="badge modify">Modify</span> (stderr)
+│   ├── <span class="file">database.php</span>                       <span class="badge modify">+Redis TLS, MySQL SSL</span>
+│   ├── <span class="file">filesystems.php</span>                    <span class="badge modify">+Azure Blob driver</span>
+│   ├── <span class="file">app.php</span>                             <span class="badge keep">Shared</span> (already reads PARTNER)
+│   └── <span class="file">cache.php</span>                           <span class="badge keep">Shared</span> (auto-prefixed)
 ├── <span class="dir">database/migrations/</span>
-│   └── <span class="new">2026_03_xx_create_gov_tables.php</span>   <span class="badge new">New</span> (8 tables)
-├── <span class="dir">docker/</span>                                <span class="badge new">NEW FOLDER</span>
+│   ├── <span class="file">existing migrations...</span>              <span class="badge keep">Shared</span>
+│   └── <span class="new">2026_04_xx_create_government_*.php</span> <span class="badge new">New</span> (8 tables)
+├── <span class="dir">routes/</span>
+│   ├── <span class="file">api.php</span>                             <span class="badge keep">Shared</span> (all tenants)
+│   └── <span class="new">api_government.php</span>                 <span class="badge new">New</span> (loaded only when PARTNER=government)
+├── <span class="dir">docker/</span>                                <span class="badge new">NEW — For Azure deployment</span>
 │   ├── <span class="new">Dockerfile</span>
 │   ├── <span class="new">nginx.conf</span>
 │   └── <span class="new">supervisor.conf</span>
@@ -1584,29 +1987,29 @@ p { margin-bottom:12px; font-size:13.5px; }
   </div>
 
   <div class="sub">
-    <h3>Website Repository</h3>
+    <h3>Website Repository (<code>mzad-new-website</code> — EXISTING, shared with all tenants)</h3>
     <div class="file-tree">
-<span class="dir">gov-auction-website/</span>
+<span class="dir">mzad-new-website/</span>                                <span style="color:var(--gray-400)">(shared repo — NOT a fork)</span>
 ├── <span class="dir">resources/js/Pages/</span>
 │   ├── <span class="dir">Auth/</span>
-│   │   ├── <span class="file">Login.vue</span>                      <span class="badge modify">Rebrand</span>
-│   │   ├── <span class="file">LoginOTP.vue</span>                   <span class="badge modify">Rebrand</span>
-│   │   └── <span class="mod">LoginRegister.vue</span>              <span class="badge modify">Add bidder_type</span>
+│   │   ├── <span class="file">Login.vue</span>                      <span class="badge modify">+gov branding</span> <code>v-if="project==='government'"</code>
+│   │   ├── <span class="file">LoginOTP.vue</span>                   <span class="badge modify">+gov branding</span>
+│   │   └── <span class="mod">LoginRegister.vue</span>              <span class="badge modify">+bidder_type for gov</span>
 │   ├── <span class="dir">Bidding/</span>
-│   │   ├── <span class="mod">HomeBidding.vue</span>                <span class="badge modify">→ Govt Home</span>
-│   │   ├── <span class="mod">Categories.vue</span>                 <span class="badge modify">Govt categories</span>
-│   │   ├── <span class="mod">Details.vue</span>                    <span class="badge modify">+ Q&A, share, masking</span>
-│   │   ├── <span class="file">MyBids.vue</span>                    <span class="badge keep">Rebrand</span>
-│   │   ├── <span class="file">WatchList.vue</span>                  <span class="badge keep">Rebrand</span>
-│   │   └── <span class="file">Refund.vue</span>                    <span class="badge keep">Rebrand</span>
-│   ├── <span class="del">Classified/</span>                        <span class="badge remove">Remove entire folder</span>
-│   ├── <span class="del">Shop/</span>                              <span class="badge remove">Remove entire folder</span>
+│   │   ├── <span class="mod">HomeBidding.vue</span>                <span class="badge modify">+gov hero/branding</span>
+│   │   ├── <span class="mod">Categories.vue</span>                 <span class="badge modify">+gov categories</span>
+│   │   ├── <span class="mod">Details.vue</span>                    <span class="badge modify">+Q&A, share, masking for gov</span>
+│   │   ├── <span class="file">MyBids.vue</span>                    <span class="badge keep">Shared</span>
+│   │   ├── <span class="file">WatchList.vue</span>                  <span class="badge keep">Shared</span>
+│   │   └── <span class="file">Refund.vue</span>                    <span class="badge keep">Shared</span>
+│   ├── <span class="dir">Classified/</span>                        <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(hidden when project=government)</span>
+│   ├── <span class="dir">Shop/</span>                              <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(hidden when project=government)</span>
 │   ├── <span class="dir">User/</span>
-│   │   ├── <span class="file">Home.vue</span>                      <span class="badge modify">Auction-focused</span>
-│   │   ├── <span class="file">Notifications.vue</span>              <span class="badge keep">Rebrand</span>
-│   │   ├── <span class="file">Payment.vue</span>                   <span class="badge modify">+ Apple/Google Pay</span>
-│   │   └── <span class="del">MyAds.vue</span>                      <span class="badge remove">Remove</span>
-│   ├── <span class="new">Admin/</span>                             <span class="badge new">NEW — 17 Dashboard screens</span>
+│   │   ├── <span class="file">Home.vue</span>                      <span class="badge modify">+auction focus for gov</span>
+│   │   ├── <span class="file">Notifications.vue</span>              <span class="badge keep">Shared</span>
+│   │   ├── <span class="file">Payment.vue</span>                   <span class="badge modify">+Apple/Google Pay for gov</span>
+│   │   └── <span class="file">MyAds.vue</span>                     <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(hidden when project=government)</span>
+│   ├── <span class="new">Admin/</span>                             <span class="badge new">NEW — 17 Dashboard screens (gov only)</span>
 │   │   ├── <span class="new">Overview.vue</span>
 │   │   ├── <span class="new">Pipeline.vue</span>
 │   │   ├── <span class="new">LiveBids.vue</span>
@@ -1624,39 +2027,66 @@ p { margin-bottom:12px; font-size:13.5px; }
 │   │   ├── <span class="new">Permissions.vue</span>
 │   │   ├── <span class="new">Notifications.vue</span>
 │   │   └── <span class="new">Search.vue</span>
-│   └── <span class="new">Static/</span>                            <span class="badge new">NEW — Static pages</span>
+│   └── <span class="new">Static/</span>                            <span class="badge new">NEW — Static pages (gov only)</span>
 │       ├── <span class="new">Terms.vue</span>
 │       ├── <span class="new">FAQ.vue</span>
 │       ├── <span class="new">About.vue</span>
 │       ├── <span class="new">KYCForm.vue</span>
 │       └── <span class="new">Invoice.vue</span>
 ├── <span class="dir">app/Services/</span>
-│   ├── <span class="file">BiddingService.php</span>                 <span class="badge keep">Keep</span>
-│   └── <span class="del">ClassifiedService.php</span>              <span class="badge remove">Remove</span>
-├── <span class="dir">docker/</span>                                <span class="badge new">NEW</span>
+│   ├── <span class="file">BiddingService.php</span>                 <span class="badge keep">Shared</span>
+│   └── <span class="file">ClassifiedService.php</span>              <span class="badge keep">Shared</span> <span style="color:var(--gray-400)">(not called when project=government)</span>
+├── <span class="dir">app/Http/Middleware/</span>
+│   ├── <span class="file">HandleInertiaRequests.php</span>          <span class="badge keep">Shared</span> (already passes project prop)
+│   └── <span class="file">SetLocale.php</span>                      <span class="badge keep">Shared</span> (gov uses ar/en like mzad)
+├── <span class="dir">resources/views/</span>
+│   └── <span class="file">app.blade.php</span>                      <span class="badge modify">+gov GTM key</span>
+├── <span class="dir">docker/</span>                                <span class="badge new">NEW — For Azure deployment</span>
 │   └── <span class="new">Dockerfile</span>
 └── <span class="dir">public/frontend/scss/</span>
-    ├── <span class="mod">details.scss</span>                       <span class="badge modify">Govt branding</span>
+    ├── <span class="file">details.scss</span>                       <span class="badge modify">+gov branding variables</span>
     └── <span class="new">admin.scss</span>                         <span class="badge new">Dashboard styles</span></div>
   </div>
 
   <div class="sub">
-    <h3>Socket.io Repository</h3>
+    <h3>Socket.io Repository (<code>gov-auction-socket</code> — NEW standalone for Azure)</h3>
     <div class="file-tree">
-<span class="dir">gov-auction-socket/</span>
+<span class="dir">gov-auction-socket/</span>                              <span style="color:var(--gray-400)">(extracted from mzadqatar-api)</span>
 ├── <span class="mod">socket-server.js</span>                       <span class="badge modify">Redis TLS, Azure config</span>
 ├── <span class="file">package.json</span>                           <span class="badge keep">Keep</span>
 ├── <span class="new">Dockerfile</span>                             <span class="badge new">New</span>
 └── <span class="new">.env.example</span>                           <span class="badge new">New</span></div>
+  </div>
+
+  <div class="sub">
+    <h3>Mobile Apps (FORKED — same as Yemen/Algeria pattern)</h3>
+    <div class="file-tree">
+<span class="dir">gov-auction-ios/</span>                                 <span style="color:var(--gray-400)">(forked from mzadqatar-ios-new)</span>
+├── <span class="badge modify">Modify</span> BiddingProductDetailVC — masking, Q&A, bid bar, ministry branding
+├── <span class="badge modify">Modify</span> ServerManager — new API endpoints, Azure base URL
+├── <span class="badge modify">Modify</span> TabBarController — auction-only tabs
+├── <span class="badge modify">Modify</span> AppDelegate — ministry theme colors
+├── <span class="badge new">New</span> GovHomeVC, ComingAuctionsBarView, AutoBidSetupVC, KYCFormVC
+├── <span class="badge new">New</span> DepositPaymentVC, WinnerPaymentVC, InvoiceVC
+└── <span class="badge new">New</span> SharePopupView, HelpPopupView, MoreMenuVC
+
+<span class="dir">gov-auction-android/</span>                             <span style="color:var(--gray-400)">(forked from mzadqatarandroid)</span>
+├── <span class="badge modify">Modify</span> Bid details layout — branding, masking, Q&A
+├── <span class="badge modify">Modify</span> API service — new endpoints, Azure URL
+├── <span class="badge modify">Modify</span> Navigation — auction-only tabs
+├── <span class="badge modify">Modify</span> Theme/colors — ministry maroon
+├── <span class="badge new">New</span> GovHomeFragment, ComingAuctionsBarView, AutoBidActivity
+├── <span class="badge new">New</span> KYCFormActivity, DepositPaymentActivity, WinnerPaymentActivity
+└── <span class="badge new">New</span> InvoiceActivity, ShareBottomSheet, HelpFABView, MoreMenuFragment</div>
   </div>
 </div>
 
 </div><!-- /content -->
 
 <div class="footer">
-  Government Auction Platform — Technical Implementation Plan v1.0<br>
+  Government Auction Platform — Technical Implementation Plan v2.0 (Option C: Config-Driven Single Codebase)<br>
   Ebdaa Digital Technology × Ministry of Finance — Tender 2025/4494 — Confidential<br>
-  Generated March 2026
+  Updated March 2026 — PARTNER=government on existing MzadQatar codebase
 </div>
 
 </body>
