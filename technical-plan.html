@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Implementation Plan — Government Auction Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --maroon: #8A1538;
+  --maroon-light: #f5e8ec;
+  --maroon-50: #fdf2f5;
+  --gold: #C5A572;
+  --navy: #0f172a;
+  --navy-light: #1e293b;
+  --azure: #0078d4;
+  --azure-light: #e8f4fd;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --orange: #d97706;
+  --orange-light: #fffbeb;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',-apple-system,sans-serif; background:var(--gray-50); color:var(--gray-800); line-height:1.7; }
+
+/* Hero */
+.hero { background:linear-gradient(135deg, var(--navy) 0%, #1a1a3e 40%, var(--maroon) 100%); color:white; padding:50px 40px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-40%; right:-15%; width:500px; height:500px; background:radial-gradient(circle,rgba(0,120,212,0.15) 0%,transparent 70%); }
+.hero::after { content:''; position:absolute; bottom:-30%; left:-10%; width:400px; height:400px; background:radial-gradient(circle,rgba(197,165,114,0.1) 0%,transparent 70%); }
+.hero-badge { display:inline-block; background:rgba(0,120,212,0.3); border:1px solid rgba(0,120,212,0.5); border-radius:20px; padding:4px 16px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; color:#60a5fa; }
+.hero h1 { font-size:34px; font-weight:900; margin-bottom:6px; letter-spacing:-0.5px; }
+.hero .subtitle { font-size:16px; opacity:0.7; margin-bottom:28px; }
+.hero-stats { display:flex; gap:16px; flex-wrap:wrap; }
+.hero-stat { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:12px 18px; backdrop-filter:blur(8px); }
+.hero-stat .val { font-size:18px; font-weight:800; }
+.hero-stat .lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.6; }
+
+/* Sticky Nav */
+.nav { background:white; border-bottom:1px solid var(--gray-200); padding:0 20px; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.04); overflow-x:auto; white-space:nowrap; }
+.nav a { display:inline-block; font-size:11.5px; font-weight:600; color:var(--gray-500); text-decoration:none; padding:12px 10px; border-bottom:2px solid transparent; transition:all 0.15s; }
+.nav a:hover, .nav a.active { color:var(--azure); border-bottom-color:var(--azure); }
+
+/* Content */
+.content { max-width:1020px; margin:0 auto; padding:36px 24px 80px; }
+
+/* Phase Headers */
+.phase { margin-bottom:48px; scroll-margin-top:60px; }
+.phase-header { display:flex; align-items:center; gap:14px; margin-bottom:20px; padding-bottom:14px; border-bottom:2px solid var(--gray-200); }
+.phase-num { min-width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:15px; color:white; flex-shrink:0; }
+.phase-num.azure { background:var(--azure); }
+.phase-num.navy { background:var(--navy); }
+.phase-num.green { background:var(--green); }
+.phase-num.maroon { background:var(--maroon); }
+.phase-num.purple { background:var(--purple); }
+.phase-num.orange { background:var(--orange); }
+.phase-num.blue { background:var(--blue); }
+.phase-num.red { background:var(--red); }
+.phase-info h2 { font-size:20px; font-weight:800; color:var(--gray-900); }
+.phase-info .meta { font-size:12px; color:var(--gray-400); margin-top:2px; }
+
+/* Cards */
+.card { background:white; border:1px solid var(--gray-200); border-radius:12px; padding:20px; margin-bottom:14px; }
+.card.azure-border { border-left:4px solid var(--azure); }
+.card.green-border { border-left:4px solid var(--green); }
+.card.maroon-border { border-left:4px solid var(--maroon); }
+.card.orange-border { border-left:4px solid var(--orange); }
+.card.navy-border { border-left:4px solid var(--navy); }
+.card.purple-border { border-left:4px solid var(--purple); }
+.card.red-border { border-left:4px solid var(--red); }
+.card-title { font-size:14px; font-weight:700; margin-bottom:8px; color:var(--gray-900); }
+
+/* Architecture Diagram */
+.arch-diagram { background:var(--navy); color:white; border-radius:14px; padding:28px; margin:20px 0; overflow-x:auto; }
+.arch-row { display:flex; gap:10px; margin-bottom:12px; align-items:stretch; flex-wrap:wrap; }
+.arch-box { flex:1; min-width:140px; padding:12px; border-radius:10px; text-align:center; font-size:12px; font-weight:600; }
+.arch-box .icon { font-size:20px; margin-bottom:4px; }
+.arch-box .name { font-weight:700; }
+.arch-box .desc { font-size:10px; opacity:0.7; margin-top:2px; }
+.arch-arrow { text-align:center; font-size:18px; color:var(--gray-400); margin:6px 0; }
+
+/* Code blocks */
+.code-block { background:#1e1e2e; color:#cdd6f4; border-radius:10px; padding:16px; margin:12px 0; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6; overflow-x:auto; white-space:pre; }
+.code-block .comment { color:#6c7086; }
+.code-block .keyword { color:#cba6f7; }
+.code-block .string { color:#a6e3a1; }
+.code-block .func { color:#89b4fa; }
+.code-block .var { color:#f9e2af; }
+
+/* Tables */
+table { width:100%; border-collapse:collapse; margin:14px 0; font-size:13px; background:white; border-radius:10px; overflow:hidden; border:1px solid var(--gray-200); }
+th { background:var(--navy); color:white; padding:10px 14px; text-align:left; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.3px; }
+td { padding:9px 14px; border-bottom:1px solid var(--gray-100); color:var(--gray-700); font-size:12.5px; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--gray-50); }
+
+/* Badges */
+.badge { display:inline-block; padding:2px 8px; border-radius:5px; font-size:10px; font-weight:700; }
+.badge.keep { background:var(--green-light); color:var(--green); }
+.badge.remove { background:var(--red-light); color:var(--red); }
+.badge.modify { background:var(--orange-light); color:var(--orange); }
+.badge.new { background:var(--azure-light); color:var(--azure); }
+.badge.existing { background:var(--purple-light); color:var(--purple); }
+
+/* File tree */
+.file-tree { background:var(--gray-100); border-radius:10px; padding:16px; margin:12px 0; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.8; }
+.file-tree .dir { color:var(--azure); font-weight:600; }
+.file-tree .file { color:var(--gray-700); }
+.file-tree .del { color:var(--red); text-decoration:line-through; opacity:0.6; }
+.file-tree .new { color:var(--green); font-weight:600; }
+.file-tree .mod { color:var(--orange); }
+
+/* Lists */
+ul, ol { margin:10px 0 10px 20px; font-size:13px; color:var(--gray-700); }
+li { margin-bottom:5px; }
+li strong { color:var(--gray-900); }
+p { margin-bottom:12px; font-size:13.5px; }
+
+/* Subsection */
+.sub { margin:20px 0; }
+.sub h3 { font-size:15px; font-weight:700; color:var(--maroon); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.sub h4 { font-size:13px; font-weight:700; color:var(--gray-800); margin-bottom:8px; }
+
+/* Grid */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+@media(max-width:768px) { .grid-2,.grid-3 { grid-template-columns:1fr; } }
+
+/* Timeline */
+.timeline { position:relative; margin:20px 0; padding-left:30px; }
+.timeline::before { content:''; position:absolute; left:11px; top:0; bottom:0; width:2px; background:var(--gray-200); }
+.timeline-item { position:relative; margin-bottom:20px; }
+.timeline-item::before { content:''; position:absolute; left:-24px; top:6px; width:12px; height:12px; border-radius:50%; border:2px solid var(--azure); background:white; }
+.timeline-item.done::before { background:var(--green); border-color:var(--green); }
+.timeline-item .week { font-size:11px; font-weight:700; color:var(--azure); text-transform:uppercase; letter-spacing:0.5px; }
+.timeline-item .title { font-size:14px; font-weight:700; color:var(--gray-900); }
+.timeline-item .details { font-size:12px; color:var(--gray-600); margin-top:4px; }
+
+/* Cost table */
+.cost-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--gray-100); font-size:13px; }
+.cost-row:last-child { border-bottom:none; font-weight:700; color:var(--maroon); }
+.cost-row .amt { font-weight:700; font-family:'JetBrains Mono',monospace; }
+
+/* Footer */
+.footer { background:var(--navy); color:white; padding:24px 40px; text-align:center; font-size:12px; opacity:0.7; }
+
+@media print { .nav { display:none; } body { font-size:11px; } }
+@media(max-width:768px) { .hero { padding:24px 16px; } .hero h1 { font-size:22px; } .content { padding:20px 14px; } }
+</style>
+</head>
+<body>
+
+<!-- ======== HERO ======== -->
+<div class="hero">
+  <div class="hero-badge">Technical Implementation Plan v1.0</div>
+  <h1>Government Auction Platform — Azure Migration</h1>
+  <div class="subtitle">From MzadQatar Fork to Production — Infrastructure, Backend, Mobile, Website & Dashboard</div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="val">8 Phases</div><div class="lbl">Implementation</div></div>
+    <div class="hero-stat"><div class="val">60 Days</div><div class="lbl">Timeline</div></div>
+    <div class="hero-stat"><div class="val">Azure</div><div class="lbl">Container Apps</div></div>
+    <div class="hero-stat"><div class="val">3 Containers</div><div class="lbl">API + Web + Socket</div></div>
+    <div class="hero-stat"><div class="val">~$1,240/mo</div><div class="lbl">Azure Cost</div></div>
+    <div class="hero-stat"><div class="val">Auction Only</div><div class="lbl">No Classifieds</div></div>
+  </div>
+</div>
+
+<!-- ======== NAV ======== -->
+<div class="nav">
+  <a href="#arch">Architecture</a>
+  <a href="#p0">P0: Azure Infra</a>
+  <a href="#p1">P1: Fork & Docker</a>
+  <a href="#p2">P2: Backend Changes</a>
+  <a href="#p3">P3: New Features</a>
+  <a href="#p4">P4: Admin Dashboard</a>
+  <a href="#p5">P5: Mobile Apps</a>
+  <a href="#p6">P6: Website</a>
+  <a href="#p7">P7: Testing & Deploy</a>
+  <a href="#timeline">Timeline</a>
+  <a href="#cost">Cost</a>
+  <a href="#files">File Map</a>
+</div>
+
+<!-- ======== CONTENT ======== -->
+<div class="content">
+
+<!-- ========== ARCHITECTURE ========== -->
+<div class="phase" id="arch">
+  <div class="phase-header">
+    <div class="phase-num azure">★</div>
+    <div class="phase-info"><h2>Target Architecture</h2><div class="meta">Azure Container Apps — 3 Containers + Managed Services</div></div>
+  </div>
+
+  <div class="arch-diagram">
+    <div style="text-align:center;font-size:13px;font-weight:700;margin-bottom:16px;color:var(--gold)">PRODUCTION ARCHITECTURE — AZURE CONTAINER APPS</div>
+
+    <!-- Users -->
+    <div class="arch-row" style="justify-content:center">
+      <div class="arch-box" style="background:rgba(255,255,255,0.1);max-width:300px">
+        <div class="icon">👥</div>
+        <div class="name">Users (1M+)</div>
+        <div class="desc">iOS App + Android App + Website</div>
+      </div>
+    </div>
+    <div class="arch-arrow">↓</div>
+
+    <!-- Cloudflare -->
+    <div class="arch-row" style="justify-content:center">
+      <div class="arch-box" style="background:#f48120;max-width:400px">
+        <div class="icon">🛡</div>
+        <div class="name">Cloudflare Pro ($20/mo)</div>
+        <div class="desc">CDN + WAF + DDoS + SSL + DNS</div>
+      </div>
+    </div>
+    <div class="arch-arrow">↓</div>
+
+    <!-- Azure Firewall -->
+    <div class="arch-row" style="justify-content:center">
+      <div class="arch-box" style="background:#0078d4;max-width:400px">
+        <div class="icon">🔥</div>
+        <div class="name">Azure Firewall Premium</div>
+        <div class="desc">IDPS + TLS Inspection + Inter-subnet security</div>
+      </div>
+    </div>
+    <div class="arch-arrow">↓</div>
+
+    <!-- Container Apps -->
+    <div class="arch-row">
+      <div class="arch-box" style="background:#0e7a0d">
+        <div class="icon">🐘</div>
+        <div class="name">API Container</div>
+        <div class="desc">PHP 8.2 FPM + Nginx<br>Laravel (REST API)<br>Auto-scale 1→10</div>
+      </div>
+      <div class="arch-box" style="background:#8B5CF6">
+        <div class="icon">🌐</div>
+        <div class="name">Website Container</div>
+        <div class="desc">PHP 8.2 FPM + Nginx + Node<br>Laravel + Vue 3 + Inertia<br>Auto-scale 1→5</div>
+      </div>
+      <div class="arch-box" style="background:#d97706">
+        <div class="icon">⚡</div>
+        <div class="name">Socket.io Container</div>
+        <div class="desc">Node.js 18<br>Live bids (Redis pub/sub)<br>WebSocket</div>
+      </div>
+      <div class="arch-box" style="background:rgba(255,255,255,0.1)">
+        <div class="icon">⏰</div>
+        <div class="name">Scheduler Job</div>
+        <div class="desc">Container Apps Job<br>Every 1 min<br>Replaces cron</div>
+      </div>
+    </div>
+    <div class="arch-arrow">↓</div>
+
+    <!-- Data Layer -->
+    <div class="arch-row">
+      <div class="arch-box" style="background:#1e40af">
+        <div class="icon">🗄</div>
+        <div class="name">Azure MySQL 8.0</div>
+        <div class="desc">Flexible Server<br>2 vCPU / 8GB RAM<br>100GB SSD</div>
+      </div>
+      <div class="arch-box" style="background:#b91c1c">
+        <div class="icon">⚡</div>
+        <div class="name">Azure Redis 6</div>
+        <div class="desc">Cache (C1 tier)<br>TLS on port 6380<br>Queue + Sessions + Pub/Sub</div>
+      </div>
+      <div class="arch-box" style="background:#0d9488">
+        <div class="icon">📦</div>
+        <div class="name">Azure Blob Storage</div>
+        <div class="desc">Images, docs, 360° photos<br>Replaces Huawei OBS<br>CDN-backed</div>
+      </div>
+      <div class="arch-box" style="background:rgba(255,255,255,0.1)">
+        <div class="icon">📧</div>
+        <div class="name">External Services</div>
+        <div class="desc">Twilio (OTP/SMS)<br>Firebase (Push)<br>Payfort (Payments)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card azure-border">
+    <div class="card-title">Why Azure Container Apps (not AKS)</div>
+    <p>Auto-scales in 60 seconds, pay-per-use, no Kubernetes expertise needed. Scales to zero when idle. Built-in HTTPS, Dapr sidecar optional. Cost: ~60% cheaper than AKS for this workload.</p>
+  </div>
+</div>
+
+<!-- ========== PHASE 0: AZURE INFRASTRUCTURE ========== -->
+<div class="phase" id="p0">
+  <div class="phase-header">
+    <div class="phase-num azure">P0</div>
+    <div class="phase-info"><h2>Azure Infrastructure Preparation</h2><div class="meta">Week 1 — Days 1-3 — DevOps Lead</div></div>
+  </div>
+
+  <div class="sub">
+    <h3>Step 1: Azure Account & Resource Group</h3>
+    <div class="code-block"><span class="comment"># 1. Create resource group (Qatar Central or nearest)</span>
+<span class="func">az</span> group create --name rg-gov-auction --location qatarcentral
+
+<span class="comment"># 2. Create Container Apps Environment</span>
+<span class="func">az</span> containerapp env create \
+  --name gov-auction-env \
+  --resource-group rg-gov-auction \
+  --location qatarcentral
+
+<span class="comment"># 3. Create Azure Container Registry</span>
+<span class="func">az</span> acr create --name govauction --resource-group rg-gov-auction \
+  --sku Basic --admin-enabled true</div>
+  </div>
+
+  <div class="sub">
+    <h3>Step 2: Database & Cache</h3>
+    <div class="code-block"><span class="comment"># MySQL Flexible Server</span>
+<span class="func">az</span> mysql flexible-server create \
+  --name gov-auction-db \
+  --resource-group rg-gov-auction \
+  --location qatarcentral \
+  --sku-name Standard_B2s \
+  --storage-size 100 \
+  --version 8.0.21 \
+  --admin-user govadmin \
+  --admin-password <span class="var">$MYSQL_PASSWORD</span>
+
+<span class="comment"># Redis Cache (TLS required)</span>
+<span class="func">az</span> redis create \
+  --name gov-auction-redis \
+  --resource-group rg-gov-auction \
+  --location qatarcentral \
+  --sku Basic --vm-size c1 \
+  --minimum-tls-version 1.2</div>
+  </div>
+
+  <div class="sub">
+    <h3>Step 3: Blob Storage</h3>
+    <div class="code-block"><span class="comment"># Storage account for images, documents, 360° photos</span>
+<span class="func">az</span> storage account create \
+  --name govauctionstg \
+  --resource-group rg-gov-auction \
+  --location qatarcentral \
+  --sku Standard_LRS \
+  --kind StorageV2
+
+<span class="comment"># Create containers</span>
+<span class="func">az</span> storage container create --name images --account-name govauctionstg --public-access blob
+<span class="func">az</span> storage container create --name documents --account-name govauctionstg
+<span class="func">az</span> storage container create --name 360-photos --account-name govauctionstg --public-access blob</div>
+  </div>
+
+  <div class="sub">
+    <h3>Step 4: Firewall & Networking</h3>
+    <table>
+      <tr><th>Component</th><th>Config</th><th>Purpose</th></tr>
+      <tr><td><strong>VNet</strong></td><td>10.0.0.0/16</td><td>Isolate all Azure resources</td></tr>
+      <tr><td><strong>Subnet: containers</strong></td><td>10.0.1.0/24</td><td>Container Apps Environment</td></tr>
+      <tr><td><strong>Subnet: data</strong></td><td>10.0.2.0/24</td><td>MySQL + Redis (private endpoints)</td></tr>
+      <tr><td><strong>Azure Firewall Premium</strong></td><td>10.0.3.0/24</td><td>IDPS, TLS inspection between subnets</td></tr>
+      <tr><td><strong>Cloudflare Pro</strong></td><td>$20/mo</td><td>CDN, WAF, DDoS — kept from MzadQatar</td></tr>
+    </table>
+  </div>
+
+  <div class="sub">
+    <h3>Step 5: Local Development Setup</h3>
+    <div class="card green-border">
+      <div class="card-title">Docker Desktop (localhost mirrors Azure)</div>
+      <p>All 3 containers run locally via docker-compose. MySQL + Redis run as containers. Developers don't need Azure accounts for daily work.</p>
+    </div>
+    <div class="code-block"><span class="comment"># docker-compose.yml (local dev)</span>
+<span class="keyword">services</span>:
+  <span class="func">api</span>:
+    build: ./api
+    ports: ["8000:80"]
+    depends_on: [mysql, redis]
+    environment:
+      - DB_HOST=mysql
+      - REDIS_HOST=redis
+      - STORAGE_DRIVER=local
+
+  <span class="func">website</span>:
+    build: ./website
+    ports: ["3000:80"]
+    depends_on: [api]
+
+  <span class="func">socketio</span>:
+    build: ./socketio
+    ports: ["6001:6001"]
+    depends_on: [redis]
+
+  <span class="func">scheduler</span>:
+    build: ./api
+    command: php artisan schedule:work
+    depends_on: [mysql, redis]
+
+  <span class="func">mysql</span>:
+    image: mysql:8.0
+    ports: ["3306:3306"]
+    volumes: ["mysql_data:/var/lib/mysql"]
+    environment:
+      MYSQL_ROOT_PASSWORD: <span class="var">$MYSQL_PASSWORD</span>
+      MYSQL_DATABASE: gov_auction
+
+  <span class="func">redis</span>:
+    image: redis:6-alpine
+    ports: ["6379:6379"]</div>
+  </div>
+</div>
+
+<!-- ========== PHASE 1: FORK & DOCKERIZE ========== -->
+<div class="phase" id="p1">
+  <div class="phase-header">
+    <div class="phase-num navy">P1</div>
+    <div class="phase-info"><h2>Fork MzadQatar & Dockerize</h2><div class="meta">Week 1 — Days 1-5 — Backend Lead + DevOps</div></div>
+  </div>
+
+  <div class="sub">
+    <h3>What We Fork (3 Repositories)</h3>
+    <table>
+      <tr><th>Repo</th><th>Source (Bitbucket)</th><th>New (GitHub/Private)</th><th>Tech</th></tr>
+      <tr><td><strong>API</strong></td><td>mzadqatar-api → MouBranchSept2025</td><td>gov-auction-api</td><td>Laravel PHP 8.2</td></tr>
+      <tr><td><strong>Website</strong></td><td>mzad-new-website → feature/analytics-dashboard</td><td>gov-auction-website</td><td>Laravel + Vue 3 + Inertia</td></tr>
+      <tr><td><strong>Socket</strong></td><td>Extract from API socket-server.js</td><td>gov-auction-socket</td><td>Node.js 18 + Socket.io</td></tr>
+    </table>
+  </div>
+
+  <div class="sub">
+    <h3>What We KEEP from MzadQatar</h3>
+    <div class="grid-2">
+      <div class="card green-border">
+        <div class="card-title">API — Keep These Controllers</div>
+        <table>
+          <tr><th>Controller</th><th>Purpose</th></tr>
+          <tr><td><code>AccessTokenController</code></td><td>OAuth + phone OTP login</td></tr>
+          <tr><td><code>UsersController</code></td><td>Register, OTP, profile</td></tr>
+          <tr><td><code>bidding/BidsController</code></td><td>Place bid, auto-bid, Q&A, deposit, refund</td></tr>
+          <tr><td><code>bidding/BidAdsController</code></td><td>Lot listing, bid history</td></tr>
+          <tr><td><code>bidding/BidCategoriesController</code></td><td>Bidding categories</td></tr>
+          <tr><td><code>bidding/GetBiddingProductDetailsController</code></td><td>Lot details</td></tr>
+          <tr><td><code>bidding/BidWatchListController</code></td><td>Watchlist</td></tr>
+          <tr><td><code>PaymentController</code></td><td>Payfort/QNB payment</td></tr>
+          <tr><td><code>Payment/PayfortController</code></td><td>Bidding deposit payment</td></tr>
+          <tr><td><code>NotificationsController</code></td><td>Push notifications</td></tr>
+          <tr><td><code>CategoriesController</code></td><td>Categories (bidding only)</td></tr>
+        </table>
+      </div>
+      <div class="card green-border">
+        <div class="card-title">API — Keep These Models</div>
+        <table>
+          <tr><th>Model</th><th>Table</th></tr>
+          <tr><td><code>User</code></td><td>users1</td></tr>
+          <tr><td><code>BidProducts</code></td><td>bid_products</td></tr>
+          <tr><td><code>Bid</code></td><td>bids</td></tr>
+          <tr><td><code>BidInfo</code></td><td>bid_info</td></tr>
+          <tr><td><code>AutoBid</code></td><td>auto_bids</td></tr>
+          <tr><td><code>BidWatchList</code></td><td>bid_watch_lists</td></tr>
+          <tr><td><code>HoldAmounts</code></td><td>hold_amounts</td></tr>
+          <tr><td><code>RequestRefund</code></td><td>request_refunds</td></tr>
+          <tr><td><code>LotQuestion</code></td><td>lot_questions</td></tr>
+          <tr><td><code>Category</code></td><td>categories</td></tr>
+          <tr><td><code>PaymentHistory</code></td><td>payment_history</td></tr>
+          <tr><td><code>Notification</code></td><td>notifications</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>What We REMOVE from MzadQatar (~40% of code)</h3>
+    <div class="card red-border">
+      <div class="card-title">API — Delete These Controllers & Models</div>
+      <table>
+        <tr><th>Remove</th><th>Reason</th></tr>
+        <tr><td><code>ProductsController</code> (classified)</td><td><span class="badge remove">Remove</span> No marketplace/classifieds</td></tr>
+        <tr><td><code>AdvertisementsController</code></td><td><span class="badge remove">Remove</span> No ad posting</td></tr>
+        <tr><td><code>PlansController</code></td><td><span class="badge remove">Remove</span> No subscription plans</td></tr>
+        <tr><td><code>ShopsController</code></td><td><span class="badge remove">Remove</span> No shops</td></tr>
+        <tr><td><code>ProductChatController</code></td><td><span class="badge remove">Remove</span> No AI chatbot</td></tr>
+        <tr><td><code>FollowsController</code></td><td><span class="badge remove">Remove</span> No social follows</td></tr>
+        <tr><td>All classified routes & views</td><td><span class="badge remove">Remove</span> Auction only</td></tr>
+        <tr><td>OpenSearch sync commands</td><td><span class="badge remove">Remove</span> MySQL search only</td></tr>
+        <tr><td>Ollama/GPU integration</td><td><span class="badge remove">Remove</span> No AI services</td></tr>
+        <tr><td>Firebase Analytics sync</td><td><span class="badge remove">Remove</span> Direct Firebase only</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Website — Keep vs Remove</h3>
+    <div class="grid-2">
+      <div class="card green-border">
+        <div class="card-title"><span class="badge keep">KEEP</span> Pages</div>
+        <ul>
+          <li><code>Auth/Login.vue</code> — Phone + OTP</li>
+          <li><code>Auth/LoginOTP.vue</code> — OTP verify</li>
+          <li><code>Bidding/HomeBidding.vue</code> — Auction home</li>
+          <li><code>Bidding/Categories.vue</code> — Categories</li>
+          <li><code>Bidding/Details.vue</code> — Product detail</li>
+          <li><code>Bidding/MyBids.vue</code> — My bids</li>
+          <li><code>Bidding/WatchList.vue</code> — Watchlist</li>
+          <li><code>Bidding/Refund.vue</code> — Deposit refund</li>
+          <li><code>User/Home.vue</code> — User dashboard</li>
+          <li><code>User/Notifications.vue</code> — Notifications</li>
+          <li><code>User/Payment.vue</code> — Payment</li>
+        </ul>
+      </div>
+      <div class="card red-border">
+        <div class="card-title"><span class="badge remove">REMOVE</span> Pages</div>
+        <ul>
+          <li><code>Classified/*</code> — All classified pages</li>
+          <li><code>Shop/*</code> — All shop pages</li>
+          <li><code>User/MyAds.vue</code> — No user ads</li>
+          <li><code>Search.vue</code> — Replace with auction search</li>
+          <li><code>AdvertiseAdd.vue</code> — No ad posting</li>
+          <li>All classified controllers/routes</li>
+          <li>ClassifiedService.php</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Dockerfiles</h3>
+    <div class="code-block"><span class="comment"># Dockerfile.api</span>
+<span class="keyword">FROM</span> php:8.2-fpm-alpine
+
+<span class="keyword">RUN</span> apk add --no-cache nginx supervisor \
+    && docker-php-ext-install pdo_mysql redis opcache
+
+<span class="keyword">COPY</span> . /var/www/html
+<span class="keyword">COPY</span> docker/nginx.conf /etc/nginx/http.d/default.conf
+<span class="keyword">COPY</span> docker/supervisor.conf /etc/supervisor/conf.d/app.conf
+
+<span class="keyword">RUN</span> composer install --no-dev --optimize-autoloader
+<span class="keyword">RUN</span> php artisan config:cache && php artisan route:cache
+
+<span class="keyword">EXPOSE</span> 80
+<span class="keyword">CMD</span> ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/app.conf"]</div>
+
+    <div class="code-block"><span class="comment"># Dockerfile.website</span>
+<span class="keyword">FROM</span> php:8.2-fpm-alpine
+
+<span class="keyword">RUN</span> apk add --no-cache nginx supervisor nodejs npm
+<span class="keyword">RUN</span> docker-php-ext-install pdo_mysql opcache
+
+<span class="keyword">COPY</span> . /var/www/html
+<span class="keyword">RUN</span> composer install --no-dev --optimize-autoloader
+<span class="keyword">RUN</span> npm ci && npm run build
+
+<span class="keyword">EXPOSE</span> 80
+<span class="keyword">CMD</span> ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/app.conf"]</div>
+
+    <div class="code-block"><span class="comment"># Dockerfile.socketio</span>
+<span class="keyword">FROM</span> node:18-alpine
+
+<span class="keyword">WORKDIR</span> /app
+<span class="keyword">COPY</span> package*.json ./
+<span class="keyword">RUN</span> npm ci --production
+
+<span class="keyword">COPY</span> . .
+<span class="keyword">EXPOSE</span> 6001
+<span class="keyword">CMD</span> ["node", "socket-server.js"]</div>
+  </div>
+</div>
+
+<!-- ========== PHASE 2: BACKEND CODE CHANGES ========== -->
+<div class="phase" id="p2">
+  <div class="phase-header">
+    <div class="phase-num green">P2</div>
+    <div class="phase-info"><h2>9 Backend Code Changes for Azure</h2><div class="meta">Week 2 — Days 6-10 — Backend Dev</div></div>
+  </div>
+
+  <table>
+    <tr><th>#</th><th>Change</th><th>File(s)</th><th>What</th><th>Effort</th></tr>
+    <tr>
+      <td>1</td>
+      <td><strong>Redis TLS</strong></td>
+      <td><code>config/database.php</code></td>
+      <td>Add <code>scheme => env('REDIS_SCHEME','tcp')</code> to all Redis connections. Azure uses <code>tls</code> on port 6380.</td>
+      <td><span class="badge modify">1 hour</span></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Azure Blob Storage</strong></td>
+      <td><code>config/filesystems.php</code><br><code>Services using OBS</code></td>
+      <td>Replace Huawei OBS with Azure Blob. Update <code>FILESYSTEM_DISK=azure</code>. Install <code>microsoft/azure-storage-blob</code> (already in composer.lock).</td>
+      <td><span class="badge modify">4 hours</span></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>MySQL SSL</strong></td>
+      <td><code>config/database.php</code></td>
+      <td>Add <code>'options' => [PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_SSL_CA')]</code>. Azure MySQL requires SSL.</td>
+      <td><span class="badge modify">30 min</span></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Session Driver</strong></td>
+      <td><code>.env</code></td>
+      <td>Change from <code>file</code> to <code>redis</code>. Container filesystem is ephemeral.</td>
+      <td><span class="badge modify">5 min</span></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>Queue Driver</strong></td>
+      <td><code>.env</code></td>
+      <td>Change from <code>sync</code> to <code>redis</code>. Async job processing for notifications, emails.</td>
+      <td><span class="badge modify">5 min</span></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><strong>Log Channel</strong></td>
+      <td><code>config/logging.php</code></td>
+      <td>Change from <code>daily</code> (file) to <code>stderr</code>. Container Apps reads stderr.</td>
+      <td><span class="badge modify">5 min</span></td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><strong>Socket.io Redis</strong></td>
+      <td><code>socket-server.js</code></td>
+      <td>Add TLS options to Redis adapter connection. Use <code>rediss://</code> prefix for Azure.</td>
+      <td><span class="badge modify">1 hour</span></td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><strong>Health Checks</strong></td>
+      <td>New: <code>routes/health.php</code></td>
+      <td>Add <code>/health</code> endpoint for Container Apps probes. Checks MySQL + Redis connectivity.</td>
+      <td><span class="badge new">2 hours</span></td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td><strong>CORS / Trusted Proxies</strong></td>
+      <td><code>app/Http/Middleware/TrustProxies.php</code></td>
+      <td>Set <code>$proxies = '*'</code> for Container Apps reverse proxy. Update CORS for new domains.</td>
+      <td><span class="badge modify">30 min</span></td>
+    </tr>
+  </table>
+
+  <div class="sub">
+    <h3>Environment Variables (.env for Azure)</h3>
+    <div class="code-block"><span class="comment"># Azure-specific .env (NEVER commit — use Azure Key Vault)</span>
+
+<span class="comment"># Database</span>
+<span class="var">DB_HOST</span>=gov-auction-db.mysql.database.azure.com
+<span class="var">DB_DATABASE</span>=gov_auction
+<span class="var">DB_USERNAME</span>=govadmin
+<span class="var">DB_PASSWORD</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">MYSQL_SSL_CA</span>=/etc/ssl/certs/DigiCertGlobalRootCA.crt.pem
+
+<span class="comment"># Redis (TLS)</span>
+<span class="var">REDIS_HOST</span>=gov-auction-redis.redis.cache.windows.net
+<span class="var">REDIS_PASSWORD</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">REDIS_PORT</span>=6380
+<span class="var">REDIS_SCHEME</span>=tls
+
+<span class="comment"># Storage</span>
+<span class="var">FILESYSTEM_DISK</span>=azure
+<span class="var">AZURE_STORAGE_NAME</span>=govauctionstg
+<span class="var">AZURE_STORAGE_KEY</span>=<span class="string">${KEY_VAULT_SECRET}</span>
+<span class="var">AZURE_STORAGE_CONTAINER</span>=images
+
+<span class="comment"># Sessions & Queue</span>
+<span class="var">SESSION_DRIVER</span>=redis
+<span class="var">QUEUE_CONNECTION</span>=redis
+<span class="var">LOG_CHANNEL</span>=stderr
+
+<span class="comment"># App</span>
+<span class="var">APP_URL</span>=https://api.govauction.qa
+<span class="var">WEBSITE_URL</span>=https://govauction.qa</div>
+  </div>
+</div>
+
+<!-- ========== PHASE 3: NEW GOVERNMENT FEATURES ========== -->
+<div class="phase" id="p3">
+  <div class="phase-header">
+    <div class="phase-num maroon">P3</div>
+    <div class="phase-info"><h2>New Government Features (Backend)</h2><div class="meta">Week 2-3 — Days 8-18 — Backend Dev</div></div>
+  </div>
+
+  <div class="sub">
+    <h3>New Database Tables</h3>
+    <div class="code-block"><span class="comment">-- 1. Government Entities (ministries, departments)</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">government_entities</span> (
+  id <span class="keyword">INT</span> AUTO_INCREMENT PRIMARY KEY,
+  name_ar <span class="keyword">VARCHAR</span>(255) NOT NULL,
+  name_en <span class="keyword">VARCHAR</span>(255) NOT NULL,
+  logo <span class="keyword">VARCHAR</span>(500),
+  contact_person <span class="keyword">VARCHAR</span>(255),
+  contact_email <span class="keyword">VARCHAR</span>(255),
+  contact_phone <span class="keyword">VARCHAR</span>(20),
+  is_active <span class="keyword">TINYINT</span>(1) DEFAULT 1,
+  created_at <span class="keyword">TIMESTAMP</span>, updated_at <span class="keyword">TIMESTAMP</span>
+);
+
+<span class="comment">-- 2. Entity Users (roles within entities)</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">entity_users</span> (
+  id <span class="keyword">INT</span> AUTO_INCREMENT PRIMARY KEY,
+  entity_id <span class="keyword">INT</span> NOT NULL REFERENCES government_entities(id),
+  user_id <span class="keyword">INT</span> NOT NULL REFERENCES users1(id),
+  role <span class="keyword">ENUM</span>('committee','entity_admin','entity_operator','viewer'),
+  created_at <span class="keyword">TIMESTAMP</span>
+);
+
+<span class="comment">-- 3. Auction Pipeline (workflow tracking)</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">auction_pipeline</span> (
+  id <span class="keyword">INT</span> AUTO_INCREMENT PRIMARY KEY,
+  bid_product_id <span class="keyword">INT</span> NOT NULL REFERENCES bid_products(id),
+  entity_id <span class="keyword">INT</span> NOT NULL REFERENCES government_entities(id),
+  stage <span class="keyword">ENUM</span>('draft','inspection','photography','valuation',
+         'approval','published','live','completed','cancelled'),
+  assigned_to <span class="keyword">INT</span> REFERENCES users1(id),
+  stage_entered_at <span class="keyword">TIMESTAMP</span>,
+  stage_deadline <span class="keyword">TIMESTAMP</span>,
+  notes <span class="keyword">TEXT</span>,
+  created_at <span class="keyword">TIMESTAMP</span>, updated_at <span class="keyword">TIMESTAMP</span>
+);
+
+<span class="comment">-- 4. Asset Valuations</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">asset_valuations</span> (
+  id <span class="keyword">INT</span> AUTO_INCREMENT PRIMARY KEY,
+  bid_product_id <span class="keyword">INT</span> NOT NULL REFERENCES bid_products(id),
+  entity_id <span class="keyword">INT</span> NOT NULL REFERENCES government_entities(id),
+  estimated_value <span class="keyword">DECIMAL</span>(12,2),
+  committee_approved_value <span class="keyword">DECIMAL</span>(12,2),
+  approved_by <span class="keyword">INT</span> REFERENCES users1(id),
+  approved_at <span class="keyword">TIMESTAMP</span>,
+  notes <span class="keyword">TEXT</span>,
+  created_at <span class="keyword">TIMESTAMP</span>
+);
+
+<span class="comment">-- 5. Disputes</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">disputes</span> (
+  id <span class="keyword">INT</span> AUTO_INCREMENT PRIMARY KEY,
+  bid_product_id <span class="keyword">INT</span> NOT NULL,
+  user_id <span class="keyword">INT</span> NOT NULL,
+  type <span class="keyword">ENUM</span>('condition_mismatch','delivery_delay','extension_failed','other'),
+  description <span class="keyword">TEXT</span>,
+  evidence_files <span class="keyword">JSON</span>,
+  status <span class="keyword">ENUM</span>('open','investigating','committee_review','resolved','rejected'),
+  resolution_notes <span class="keyword">TEXT</span>,
+  resolved_by <span class="keyword">INT</span>,
+  created_at <span class="keyword">TIMESTAMP</span>, updated_at <span class="keyword">TIMESTAMP</span>
+);
+
+<span class="comment">-- 6. KYC (post-win identity verification)</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">winner_kyc</span> (
+  id <span class="keyword">INT</span> AUTO_INCREMENT PRIMARY KEY,
+  user_id <span class="keyword">INT</span> NOT NULL,
+  bid_product_id <span class="keyword">INT</span> NOT NULL,
+  full_name <span class="keyword">VARCHAR</span>(255),
+  id_type <span class="keyword">ENUM</span>('national_id','passport','company_cr'),
+  id_number <span class="keyword">VARCHAR</span>(100),
+  id_front_image <span class="keyword">VARCHAR</span>(500),
+  id_back_image <span class="keyword">VARCHAR</span>(500),
+  status <span class="keyword">ENUM</span>('pending','approved','rejected'),
+  reviewed_by <span class="keyword">INT</span>,
+  created_at <span class="keyword">TIMESTAMP</span>, updated_at <span class="keyword">TIMESTAMP</span>
+);
+
+<span class="comment">-- 7. Invoices / Receipts</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">invoices</span> (
+  id <span class="keyword">INT</span> AUTO_INCREMENT PRIMARY KEY,
+  invoice_number <span class="keyword">VARCHAR</span>(50) UNIQUE,
+  user_id <span class="keyword">INT</span> NOT NULL,
+  bid_product_id <span class="keyword">INT</span> NOT NULL,
+  amount <span class="keyword">DECIMAL</span>(12,2),
+  deposit_amount <span class="keyword">DECIMAL</span>(12,2),
+  commission_amount <span class="keyword">DECIMAL</span>(12,2),
+  status <span class="keyword">ENUM</span>('draft','issued','paid','overdue','cancelled'),
+  paid_at <span class="keyword">TIMESTAMP</span>,
+  pdf_url <span class="keyword">VARCHAR</span>(500),
+  created_at <span class="keyword">TIMESTAMP</span>, updated_at <span class="keyword">TIMESTAMP</span>
+);
+
+<span class="comment">-- 8. Audit Log (government compliance)</span>
+<span class="keyword">CREATE TABLE</span> <span class="func">audit_log</span> (
+  id <span class="keyword">BIGINT</span> AUTO_INCREMENT PRIMARY KEY,
+  user_id <span class="keyword">INT</span>,
+  action <span class="keyword">VARCHAR</span>(100),
+  model_type <span class="keyword">VARCHAR</span>(100),
+  model_id <span class="keyword">INT</span>,
+  old_values <span class="keyword">JSON</span>,
+  new_values <span class="keyword">JSON</span>,
+  ip_address <span class="keyword">VARCHAR</span>(45),
+  created_at <span class="keyword">TIMESTAMP</span>,
+  INDEX(action), INDEX(model_type, model_id), INDEX(created_at)
+);</div>
+  </div>
+
+  <div class="sub">
+    <h3>New API Endpoints</h3>
+    <table>
+      <tr><th>Method</th><th>Endpoint</th><th>Controller</th><th>Purpose</th></tr>
+      <tr><td>GET</td><td>/api/entities</td><td><span class="badge new">GovernmentEntityController</span></td><td>List all entities</td></tr>
+      <tr><td>POST</td><td>/api/entities</td><td><span class="badge new">GovernmentEntityController</span></td><td>Create entity</td></tr>
+      <tr><td>GET</td><td>/api/pipeline</td><td><span class="badge new">PipelineController</span></td><td>Auction workflow pipeline</td></tr>
+      <tr><td>PUT</td><td>/api/pipeline/{id}/stage</td><td><span class="badge new">PipelineController</span></td><td>Move to next stage</td></tr>
+      <tr><td>GET</td><td>/api/valuations</td><td><span class="badge new">ValuationController</span></td><td>List asset valuations</td></tr>
+      <tr><td>POST</td><td>/api/valuations</td><td><span class="badge new">ValuationController</span></td><td>Submit valuation</td></tr>
+      <tr><td>PUT</td><td>/api/valuations/{id}/approve</td><td><span class="badge new">ValuationController</span></td><td>Committee approves</td></tr>
+      <tr><td>GET</td><td>/api/disputes</td><td><span class="badge new">DisputeController</span></td><td>List disputes</td></tr>
+      <tr><td>POST</td><td>/api/disputes</td><td><span class="badge new">DisputeController</span></td><td>File a dispute</td></tr>
+      <tr><td>PUT</td><td>/api/disputes/{id}/resolve</td><td><span class="badge new">DisputeController</span></td><td>Resolve dispute</td></tr>
+      <tr><td>POST</td><td>/api/kyc</td><td><span class="badge new">KYCController</span></td><td>Submit KYC after winning</td></tr>
+      <tr><td>GET</td><td>/api/invoices</td><td><span class="badge new">InvoiceController</span></td><td>List invoices</td></tr>
+      <tr><td>POST</td><td>/api/invoices/{id}/pdf</td><td><span class="badge new">InvoiceController</span></td><td>Generate PDF invoice</td></tr>
+      <tr><td>GET</td><td>/api/compliance/overview</td><td><span class="badge new">ComplianceController</span></td><td>Dashboard overview KPIs</td></tr>
+      <tr><td>GET</td><td>/api/compliance/sla</td><td><span class="badge new">ComplianceController</span></td><td>SLA adherence metrics</td></tr>
+      <tr><td>GET</td><td>/api/reports/monthly</td><td><span class="badge new">ReportController</span></td><td>Monthly report data</td></tr>
+      <tr><td>GET</td><td>/api/audit-log</td><td><span class="badge new">AuditController</span></td><td>Audit trail</td></tr>
+      <tr><td colspan="4" style="text-align:center;color:var(--gray-400);font-size:11px">+ existing MzadQatar bidding endpoints (keep as-is)</td></tr>
+    </table>
+  </div>
+
+  <div class="sub">
+    <h3>Modifications to Existing MzadQatar Code</h3>
+    <table>
+      <tr><th>File</th><th>Change</th></tr>
+      <tr><td><code>BidsController.php</code></td><td><span class="badge modify">Modify</span> Add entity_id filter, government branding, bidder masking (****XXX)</td></tr>
+      <tr><td><code>BidAdsController.php</code></td><td><span class="badge modify">Modify</span> Filter by entity, add auction pipeline status</td></tr>
+      <tr><td><code>BidCategoriesController.php</code></td><td><span class="badge modify">Modify</span> Government-specific categories only</td></tr>
+      <tr><td><code>UsersController.php</code></td><td><span class="badge modify">Modify</span> Add bidder_type (individual/company), GCC support</td></tr>
+      <tr><td><code>PayfortController.php</code></td><td><span class="badge modify">Modify</span> Add Apple Pay, Google Pay, bank transfer</td></tr>
+      <tr><td><code>NotificationsController.php</code></td><td><span class="badge modify">Modify</span> Government notification templates (auction approved, etc.)</td></tr>
+      <tr><td><code>BidProducts.php</code> (Model)</td><td><span class="badge modify">Modify</span> Add entity_id, valuation fields, pipeline stage</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ========== PHASE 4: ADMIN DASHBOARD ========== -->
+<div class="phase" id="p4">
+  <div class="phase-header">
+    <div class="phase-num purple">P4</div>
+    <div class="phase-info"><h2>Admin Dashboard (NEW — 17 Screens)</h2><div class="meta">Week 2-4 — Days 8-25 — Frontend Dev</div></div>
+  </div>
+
+  <div class="card purple-border">
+    <div class="card-title">Tech Stack</div>
+    <p><strong>Vue 3 + Inertia.js + Tailwind CSS</strong> — Same stack as the government website (not React). Ships inside the website container as admin routes. Uses Laravel middleware for role-based access.</p>
+  </div>
+
+  <table>
+    <tr><th>#</th><th>Screen</th><th>API Endpoints Used</th><th>Source</th><th>Days</th></tr>
+    <tr><td>1</td><td><strong>Overview / KPIs</strong></td><td>/compliance/overview</td><td><span class="badge new">Build</span></td><td>2</td></tr>
+    <tr><td>2</td><td><strong>Workflow Pipeline</strong></td><td>/pipeline, /pipeline/{id}/stage</td><td><span class="badge new">Build</span></td><td>2</td></tr>
+    <tr><td>3</td><td><strong>Live Bids Monitor</strong></td><td>WebSocket (socket.io)</td><td><span class="badge new">Build</span></td><td>2</td></tr>
+    <tr><td>4</td><td><strong>Financial Tracking</strong></td><td>/invoices, /compliance/overview</td><td><span class="badge new">Build</span></td><td>1.5</td></tr>
+    <tr><td>5</td><td><strong>Government Entities</strong></td><td>/entities</td><td><span class="badge new">Build</span></td><td>1</td></tr>
+    <tr><td>6</td><td><strong>Reports</strong></td><td>/reports/monthly</td><td><span class="badge new">Build</span></td><td>1.5</td></tr>
+    <tr><td>7</td><td><strong>Compliance Monitor</strong></td><td>/compliance/sla</td><td><span class="badge new">Build</span></td><td>2</td></tr>
+    <tr><td>8</td><td><strong>Asset Valuation</strong></td><td>/valuations</td><td><span class="badge new">Build</span></td><td>1</td></tr>
+    <tr><td>9</td><td><strong>Invoice Management</strong></td><td>/invoices</td><td><span class="badge new">Build</span></td><td>1</td></tr>
+    <tr><td>10</td><td><strong>Dispute Management</strong></td><td>/disputes</td><td><span class="badge new">Build</span></td><td>1.5</td></tr>
+    <tr><td>11</td><td><strong>Price Review</strong></td><td>/valuations, /pipeline</td><td><span class="badge new">Build</span></td><td>1</td></tr>
+    <tr><td>12</td><td><strong>Auction Detail (Admin)</strong></td><td>/bidding/*, /pipeline</td><td><span class="badge existing">Extend Details.vue</span></td><td>1</td></tr>
+    <tr><td>13</td><td><strong>User Management</strong></td><td>/users</td><td><span class="badge existing">Extend UsersController</span></td><td>1</td></tr>
+    <tr><td>14</td><td><strong>Categories</strong></td><td>/categories</td><td><span class="badge existing">Extend CategoriesController</span></td><td>0.5</td></tr>
+    <tr><td>15</td><td><strong>Permissions / IAM</strong></td><td>/entity-users</td><td><span class="badge new">Build</span></td><td>1</td></tr>
+    <tr><td>16</td><td><strong>Notifications</strong></td><td>/notifications</td><td><span class="badge existing">Extend NotificationsController</span></td><td>0.5</td></tr>
+    <tr><td>17</td><td><strong>Search</strong></td><td>MySQL FULLTEXT</td><td><span class="badge new">Build</span></td><td>0.5</td></tr>
+    <tr><td colspan="4" style="text-align:right;font-weight:700">Total</td><td><strong>~21</strong></td></tr>
+  </table>
+</div>
+
+<!-- ========== PHASE 5: MOBILE APPS ========== -->
+<div class="phase" id="p5">
+  <div class="phase-header">
+    <div class="phase-num orange">P5</div>
+    <div class="phase-info"><h2>Mobile Apps (iOS + Android)</h2><div class="meta">Week 2-4 — Days 8-28 — Mobile Team</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card orange-border">
+      <div class="card-title">iOS (Objective-C — MVVM)</div>
+      <table>
+        <tr><th>Action</th><th>Files</th></tr>
+        <tr><td><span class="badge keep">Keep</span></td><td>
+          <code>BiddingProductDetailVC</code><br>
+          <code>BiddingCategoryVC</code><br>
+          <code>BiddingCategoryProductVC</code><br>
+          <code>BiddingMyBidVC</code><br>
+          <code>BiddingWatchlistVC</code><br>
+          <code>BiddingRefundRequestVC</code><br>
+          <code>ServerManager</code> (bidding methods)<br>
+          <code>NotificationViewController</code>
+        </td></tr>
+        <tr><td><span class="badge remove">Remove</span></td><td>
+          <code>ProductDetailsViewController</code> (classified)<br>
+          <code>ChatbotViewController</code><br>
+          <code>CategoryScreen</code> (classified part)<br>
+          <code>SellerProfileVC</code><br>
+          All classified tabs/cells<br>
+          Shop-related VCs
+        </td></tr>
+        <tr><td><span class="badge new">New</span></td><td>
+          <code>GovHomeVC</code> — Govt auction home<br>
+          <code>ComingAuctionsBarView</code> — Countdown<br>
+          <code>AutoBidSetupVC</code> — Max bid<br>
+          <code>KYCFormVC</code> — Winner ID upload<br>
+          <code>DepositPaymentVC</code> — Deposit flow<br>
+          <code>WinnerPaymentVC</code> — Full payment<br>
+          <code>InvoiceVC</code> — View receipt<br>
+          <code>SharePopupView</code> — WhatsApp/X/FB<br>
+          <code>HelpPopupView</code> — Intercom-style<br>
+          <code>MoreMenuVC</code> — Consolidated menu
+        </td></tr>
+        <tr><td><span class="badge modify">Modify</span></td><td>
+          <code>BiddingProductDetailVC</code> — Govt branding, bidder masking, specs under title, action buttons, Q&A section, 300px gallery<br>
+          <code>ServerManager</code> — New API endpoints, Azure base URL<br>
+          <code>TabBarController</code> — Auction-only tabs<br>
+          <code>AppDelegate</code> — Ministry branding, theme colors
+        </td></tr>
+      </table>
+    </div>
+    <div class="card orange-border">
+      <div class="card-title">Android (Kotlin)</div>
+      <table>
+        <tr><th>Action</th><th>Files</th></tr>
+        <tr><td><span class="badge keep">Keep</span></td><td>
+          <code>QatarAuctionHomeTabActivityNew</code><br>
+          <code>BidCategoriesListActivity</code><br>
+          <code>BiddingFragmentMainHomeScreen</code><br>
+          <code>BiddingFragmentMyBids</code><br>
+          <code>BiddingFragmentWatchList</code><br>
+          Bidding details layout<br>
+          Payment activity
+        </td></tr>
+        <tr><td><span class="badge remove">Remove</span></td><td>
+          <code>SellerProductFragmentNew</code><br>
+          <code>ProductListFragment</code><br>
+          <code>CategoryFragment</code> (classified)<br>
+          <code>ChatbotActivity</code><br>
+          <code>MyAdsFragment</code><br>
+          All classified activities/fragments<br>
+          Shop modules
+        </td></tr>
+        <tr><td><span class="badge new">New</span></td><td>
+          <code>GovHomeFragment</code><br>
+          <code>ComingAuctionsBarView</code><br>
+          <code>AutoBidActivity</code><br>
+          <code>KYCFormActivity</code><br>
+          <code>DepositPaymentActivity</code><br>
+          <code>WinnerPaymentActivity</code><br>
+          <code>InvoiceActivity</code><br>
+          <code>ShareBottomSheet</code><br>
+          <code>HelpFABView</code><br>
+          <code>MoreMenuFragment</code>
+        </td></tr>
+        <tr><td><span class="badge modify">Modify</span></td><td>
+          Bid details layout — branding, masking, Q&A<br>
+          API service — new endpoints, Azure URL<br>
+          Navigation — auction-only tabs<br>
+          Theme/colors — ministry maroon
+        </td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card maroon-border" style="margin-top:14px">
+    <div class="card-title">Ministry Branding Changes (Both Platforms)</div>
+    <table>
+      <tr><th>Element</th><th>Current (MzadQatar)</th><th>New (Government)</th></tr>
+      <tr><td>Primary Color</td><td>#FF6B00 (Orange)</td><td>#8A1538 (Maroon — Pantone 1955 C)</td></tr>
+      <tr><td>App Icon</td><td>Mzad logo</td><td>Ministry of Finance emblem</td></tr>
+      <tr><td>Splash Screen</td><td>Mzad branding</td><td>Ministry + Mzad co-branding</td></tr>
+      <tr><td>Font</td><td>System default</td><td>Noto Kufi Arabic + Inter</td></tr>
+      <tr><td>Bottom Tabs</td><td>Home / Bidding / Post / Notifications / More</td><td>Home / Auctions / My Bids / Notifications / More</td></tr>
+      <tr><td>Bidder Display</td><td>Full phone number</td><td>Masked: (****847) + country flag</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ========== PHASE 6: WEBSITE ========== -->
+<div class="phase" id="p6">
+  <div class="phase-header">
+    <div class="phase-num blue">P6</div>
+    <div class="phase-info"><h2>Website (10+ Pages)</h2><div class="meta">Week 3-4 — Days 15-28 — Frontend Dev</div></div>
+  </div>
+
+  <table>
+    <tr><th>#</th><th>Page</th><th>Source from MzadQatar</th><th>Changes</th></tr>
+    <tr><td>1</td><td><strong>Home</strong></td><td><code>Bidding/HomeBidding.vue</code></td><td><span class="badge modify">Rebrand</span> — Hero with ministry branding, categories grid, coming auctions, how it works, stats bar</td></tr>
+    <tr><td>2</td><td><strong>Auction Listing</strong></td><td><code>Bidding/Categories.vue</code></td><td><span class="badge modify">Rebrand</span> — Filters, sorting, grid/list, countdown timers</td></tr>
+    <tr><td>3</td><td><strong>Auction Detail</strong></td><td><code>Bidding/Details.vue</code></td><td><span class="badge modify">Extend</span> — Q&A, share popup, action buttons, bidder masking, specs grid</td></tr>
+    <tr><td>4</td><td><strong>Login</strong></td><td><code>Auth/Login.vue</code></td><td><span class="badge modify">Rebrand</span> — Ministry logo, maroon theme</td></tr>
+    <tr><td>5</td><td><strong>OTP Verify</strong></td><td><code>Auth/LoginOTP.vue</code></td><td><span class="badge modify">Rebrand</span> — Ministry branding</td></tr>
+    <tr><td>6</td><td><strong>Register</strong></td><td><code>Auth/LoginRegister.vue</code></td><td><span class="badge modify">Modify</span> — Add bidder type (individual/company)</td></tr>
+    <tr><td>7</td><td><strong>User Dashboard</strong></td><td><code>User/Home.vue</code></td><td><span class="badge modify">Modify</span> — Auction-focused, deposits, won items</td></tr>
+    <tr><td>8</td><td><strong>My Bids</strong></td><td><code>Bidding/MyBids.vue</code></td><td><span class="badge modify">Rebrand</span></td></tr>
+    <tr><td>9</td><td><strong>Watchlist</strong></td><td><code>Bidding/WatchList.vue</code></td><td><span class="badge modify">Rebrand</span></td></tr>
+    <tr><td>10</td><td><strong>Refund</strong></td><td><code>Bidding/Refund.vue</code></td><td><span class="badge modify">Rebrand</span></td></tr>
+    <tr><td>11</td><td><strong>Payment</strong></td><td><code>User/Payment.vue</code></td><td><span class="badge modify">Extend</span> — Apple Pay, Google Pay, bank transfer</td></tr>
+    <tr><td>12</td><td><strong>Notifications</strong></td><td><code>User/Notifications.vue</code></td><td><span class="badge modify">Rebrand</span></td></tr>
+    <tr><td>13</td><td><strong>Terms & Conditions</strong></td><td><span class="badge new">New Page</span></td><td>Full T&C with section navigation (10 sections)</td></tr>
+    <tr><td>14</td><td><strong>FAQ</strong></td><td><span class="badge new">New Page</span></td><td>Common questions, expandable answers</td></tr>
+    <tr><td>15</td><td><strong>About</strong></td><td><span class="badge new">New Page</span></td><td>Platform overview, ministry partnership</td></tr>
+    <tr><td>16</td><td><strong>KYC Form</strong></td><td><span class="badge new">New Page</span></td><td>Winner ID upload and verification</td></tr>
+    <tr><td>17</td><td><strong>Invoice</strong></td><td><span class="badge new">New Page</span></td><td>View/download payment receipt</td></tr>
+  </table>
+
+  <div class="card blue-border" style="margin-top:14px">
+    <div class="card-title">Website Services to Keep & Modify</div>
+    <table>
+      <tr><th>Service</th><th>Action</th></tr>
+      <tr><td><code>BiddingService.php</code></td><td><span class="badge keep">Keep</span> — Core auction logic (lot details, categories, credit, bank accounts)</td></tr>
+      <tr><td><code>ClassifiedService.php</code></td><td><span class="badge remove">Remove</span> — No classifieds</td></tr>
+      <tr><td><code>helpers.php</code> (<code>perform_curl</code>)</td><td><span class="badge modify">Modify</span> — Point to new Azure API URL</td></tr>
+      <tr><td><code>AppServiceProvider.php</code></td><td><span class="badge modify">Modify</span> — Update <code>Http::mzadApi()</code> base URL</td></tr>
+      <tr><td><code>BiddingController.php</code></td><td><span class="badge modify">Modify</span> — Government entity context, branding</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ========== PHASE 7: TESTING & DEPLOY ========== -->
+<div class="phase" id="p7">
+  <div class="phase-header">
+    <div class="phase-num red">P7</div>
+    <div class="phase-info"><h2>Testing, QA & Azure Deployment</h2><div class="meta">Week 5-8 — Days 29-60 — QA Team + DevOps</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Testing Plan</div>
+      <table>
+        <tr><th>Type</th><th>Scope</th><th>Days</th></tr>
+        <tr><td><strong>Unit Tests</strong></td><td>API controllers, models, services (PHPUnit)</td><td>3</td></tr>
+        <tr><td><strong>Integration</strong></td><td>API ↔ MySQL, Redis, Blob Storage, Socket.io</td><td>3</td></tr>
+        <tr><td><strong>E2E (Mobile)</strong></td><td>Full bidding flow iOS + Android (real devices)</td><td>5</td></tr>
+        <tr><td><strong>E2E (Website)</strong></td><td>Full bidding flow desktop + mobile browser</td><td>3</td></tr>
+        <tr><td><strong>Load Testing</strong></td><td>1,000 concurrent users (k6 or Artillery)</td><td>2</td></tr>
+        <tr><td><strong>Security</strong></td><td>OWASP scan, penetration testing, SSL verify</td><td>3</td></tr>
+        <tr><td><strong>UAT</strong></td><td>Ministry committee acceptance testing</td><td>5</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Azure Deployment Pipeline</div>
+      <div class="code-block"><span class="comment"># GitHub Actions → Azure Container Apps</span>
+<span class="keyword">name</span>: Deploy to Azure
+
+<span class="keyword">on</span>:
+  push:
+    branches: [main]
+
+<span class="keyword">jobs</span>:
+  <span class="func">deploy</span>:
+    steps:
+      - <span class="func">checkout</span>
+      - <span class="func">az login</span> (service principal)
+      - <span class="func">docker build</span> -t govauction.azurecr.io/api
+      - <span class="func">docker push</span> govauction.azurecr.io/api
+      - <span class="func">az containerapp update</span> \
+          --name api \
+          --image govauction.azurecr.io/api:latest</div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Go-Live Checklist</h3>
+    <ol>
+      <li>All containers deployed to Azure Container Apps (Qatar Central)</li>
+      <li>MySQL Flexible Server — data migrated, indexes optimized</li>
+      <li>Redis Cache — TLS verified, sessions working</li>
+      <li>Blob Storage — images CDN-backed via Cloudflare</li>
+      <li>Cloudflare Pro — DNS pointed, WAF rules active, SSL full-strict</li>
+      <li>Azure Firewall — IDPS rules active, TLS inspection enabled</li>
+      <li>iOS + Android — App Store / Play Store submission (or TestFlight)</li>
+      <li>WebSocket — live bid updates verified under load</li>
+      <li>Payment gateway — Payfort sandbox → production keys</li>
+      <li>Firebase — push notifications tested on both platforms</li>
+      <li>Twilio — OTP SMS verified for Qatar + GCC numbers</li>
+      <li>Backup — Azure auto-backup configured (daily, 30-day retention)</li>
+      <li>Monitoring — Azure Monitor + alerts for CPU, memory, errors</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ========== TIMELINE ========== -->
+<div class="phase" id="timeline">
+  <div class="phase-header">
+    <div class="phase-num azure">📅</div>
+    <div class="phase-info"><h2>60-Day Timeline</h2><div class="meta">From Contract Signing to Go-Live</div></div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="week">Week 1 (Days 1-5)</div>
+      <div class="title">Azure Infra + Fork + Dockerize</div>
+      <div class="details">Create Azure resources (MySQL, Redis, Blob, VNet). Fork 3 MzadQatar repos. Write Dockerfiles. docker-compose running locally. Remove classified code (~40%).</div>
+    </div>
+    <div class="timeline-item">
+      <div class="week">Week 2 (Days 6-12)</div>
+      <div class="title">9 Azure Code Changes + Database Schema</div>
+      <div class="details">Redis TLS, Blob storage, MySQL SSL, session/queue/log changes. Create 8 new database tables. Health check endpoints. Start new API controllers.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="week">Week 3 (Days 13-19)</div>
+      <div class="title">Backend Features + Dashboard Start</div>
+      <div class="details">Complete new API endpoints (entities, pipeline, valuations, disputes, KYC, invoices, compliance). Start admin dashboard (Vue 3). Begin mobile branding changes.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="week">Week 4 (Days 20-28)</div>
+      <div class="title">Dashboard + Mobile + Website</div>
+      <div class="details">Complete 17 dashboard screens. iOS + Android: remove classifieds, add government features, ministry branding. Website: rebrand all pages, add new pages (T&C, FAQ, KYC, Invoice).</div>
+    </div>
+    <div class="timeline-item">
+      <div class="week">Week 5-6 (Days 29-42)</div>
+      <div class="title">QA + Integration Testing</div>
+      <div class="details">Unit tests, integration tests, E2E testing (mobile + website). Load testing (1,000 concurrent). Security scan (OWASP). Fix bugs from testing.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="week">Week 7 (Days 43-49)</div>
+      <div class="title">Azure Staging + UAT</div>
+      <div class="details">Deploy to Azure staging environment. Ministry committee UAT. App Store / Play Store submission. Final bug fixes from UAT feedback.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="week">Week 8 (Days 50-60)</div>
+      <div class="title">Go-Live + Monitoring</div>
+      <div class="details">Production deploy. DNS cutover. Staff training. 24/7 monitoring for first week. Hot-fix patches as needed. Handover documentation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== COST ========== -->
+<div class="phase" id="cost">
+  <div class="phase-header">
+    <div class="phase-num green">$</div>
+    <div class="phase-info"><h2>Monthly Azure Cost Estimate</h2><div class="meta">Production steady-state (~$1,240/month)</div></div>
+  </div>
+
+  <div class="card">
+    <div class="cost-row"><span>Azure Container Apps (API × 2 replicas)</span><span class="amt">$120/mo</span></div>
+    <div class="cost-row"><span>Azure Container Apps (Website × 2 replicas)</span><span class="amt">$80/mo</span></div>
+    <div class="cost-row"><span>Azure Container Apps (Socket.io × 1 replica)</span><span class="amt">$40/mo</span></div>
+    <div class="cost-row"><span>Azure Container Apps Job (Scheduler)</span><span class="amt">$10/mo</span></div>
+    <div class="cost-row"><span>Azure MySQL Flexible Server (B2s, 100GB)</span><span class="amt">$120/mo</span></div>
+    <div class="cost-row"><span>Azure Redis Cache (C1, 1GB)</span><span class="amt">$80/mo</span></div>
+    <div class="cost-row"><span>Azure Blob Storage (100GB + CDN egress)</span><span class="amt">$30/mo</span></div>
+    <div class="cost-row"><span>Azure Container Registry (Basic)</span><span class="amt">$5/mo</span></div>
+    <div class="cost-row"><span>Azure Firewall Premium</span><span class="amt">$700/mo</span></div>
+    <div class="cost-row"><span>Azure VNet + Private Endpoints</span><span class="amt">$15/mo</span></div>
+    <div class="cost-row"><span>Azure Monitor + Log Analytics</span><span class="amt">$20/mo</span></div>
+    <div class="cost-row"><span>Cloudflare Pro (CDN/WAF)</span><span class="amt">$20/mo</span></div>
+    <div class="cost-row" style="border-top:2px solid var(--gray-200);padding-top:12px"><span>TOTAL (estimated)</span><span class="amt" style="font-size:18px">~$1,240/mo</span></div>
+  </div>
+
+  <div class="card azure-border" style="margin-top:14px">
+    <div class="card-title">Cost Optimization Notes</div>
+    <ul>
+      <li><strong>Azure Firewall Premium ($700/mo)</strong> is the biggest cost. Can be replaced with NSG rules + Azure DDoS if strict IDPS not required initially.</li>
+      <li><strong>Container Apps scale to zero</strong> — cost drops significantly during off-hours.</li>
+      <li><strong>Reserved instances</strong> for MySQL can save ~40% on 1-year commitment.</li>
+      <li><strong>Without Firewall Premium</strong>, cost drops to ~$540/mo.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== FILE MAP ========== -->
+<div class="phase" id="files">
+  <div class="phase-header">
+    <div class="phase-num navy">📁</div>
+    <div class="phase-info"><h2>Complete File Map: MzadQatar → Government Fork</h2><div class="meta">What we take, remove, modify, and build new</div></div>
+  </div>
+
+  <div class="sub">
+    <h3>API Repository</h3>
+    <div class="file-tree">
+<span class="dir">gov-auction-api/</span>
+├── <span class="dir">app/Http/Controllers/API/</span>
+│   ├── <span class="file">AccessTokenController.php</span>          <span class="badge keep">Keep</span>
+│   ├── <span class="file">UsersController.php</span>                <span class="badge modify">Modify</span> (bidder_type, GCC)
+│   ├── <span class="file">CategoriesController.php</span>           <span class="badge keep">Keep</span>
+│   ├── <span class="file">NotificationsController.php</span>        <span class="badge modify">Modify</span>
+│   ├── <span class="file">PaymentController.php</span>              <span class="badge modify">Modify</span>
+│   ├── <span class="del">ProductsController.php</span>             <span class="badge remove">Remove</span>
+│   ├── <span class="del">AdvertisementsController.php</span>       <span class="badge remove">Remove</span>
+│   ├── <span class="del">PlansController.php</span>                <span class="badge remove">Remove</span>
+│   ├── <span class="del">ShopsController.php</span>                <span class="badge remove">Remove</span>
+│   ├── <span class="del">FollowsController.php</span>              <span class="badge remove">Remove</span>
+│   ├── <span class="del">ProductChatController.php</span>          <span class="badge remove">Remove</span>
+│   ├── <span class="dir">bidding/</span>
+│   │   ├── <span class="file">BidsController.php</span>             <span class="badge modify">Modify</span> (masking, entity_id)
+│   │   ├── <span class="file">BidAdsController.php</span>           <span class="badge modify">Modify</span>
+│   │   ├── <span class="file">BidCategoriesController.php</span>    <span class="badge keep">Keep</span>
+│   │   ├── <span class="file">GetBiddingProductDetailsController.php</span> <span class="badge keep">Keep</span>
+│   │   └── <span class="file">BidWatchListController.php</span>     <span class="badge keep">Keep</span>
+│   ├── <span class="dir">Payment/</span>
+│   │   └── <span class="file">PayfortController.php</span>          <span class="badge modify">Modify</span> (Apple/Google Pay)
+│   └── <span class="new">Government/</span>                        <span class="badge new">NEW FOLDER</span>
+│       ├── <span class="new">GovernmentEntityController.php</span>
+│       ├── <span class="new">PipelineController.php</span>
+│       ├── <span class="new">ValuationController.php</span>
+│       ├── <span class="new">DisputeController.php</span>
+│       ├── <span class="new">KYCController.php</span>
+│       ├── <span class="new">InvoiceController.php</span>
+│       ├── <span class="new">ComplianceController.php</span>
+│       ├── <span class="new">ReportController.php</span>
+│       └── <span class="new">AuditController.php</span>
+├── <span class="dir">app/Models/</span>
+│   ├── <span class="file">User.php</span>                           <span class="badge modify">Modify</span>
+│   ├── <span class="file">BidProducts.php</span>                    <span class="badge modify">Modify</span> (entity_id, valuation)
+│   ├── <span class="file">Bid.php, AutoBid.php</span>               <span class="badge keep">Keep</span>
+│   ├── <span class="new">GovernmentEntity.php</span>               <span class="badge new">New</span>
+│   ├── <span class="new">AuctionPipeline.php</span>                <span class="badge new">New</span>
+│   ├── <span class="new">AssetValuation.php</span>                 <span class="badge new">New</span>
+│   ├── <span class="new">Dispute.php</span>                        <span class="badge new">New</span>
+│   ├── <span class="new">WinnerKYC.php</span>                      <span class="badge new">New</span>
+│   ├── <span class="new">Invoice.php</span>                        <span class="badge new">New</span>
+│   └── <span class="new">AuditLog.php</span>                       <span class="badge new">New</span>
+├── <span class="dir">config/</span>
+│   ├── <span class="file">database.php</span>                       <span class="badge modify">Modify</span> (Redis TLS, MySQL SSL)
+│   ├── <span class="file">filesystems.php</span>                    <span class="badge modify">Modify</span> (Azure Blob)
+│   └── <span class="file">logging.php</span>                        <span class="badge modify">Modify</span> (stderr)
+├── <span class="dir">database/migrations/</span>
+│   └── <span class="new">2026_03_xx_create_gov_tables.php</span>   <span class="badge new">New</span> (8 tables)
+├── <span class="dir">docker/</span>                                <span class="badge new">NEW FOLDER</span>
+│   ├── <span class="new">Dockerfile</span>
+│   ├── <span class="new">nginx.conf</span>
+│   └── <span class="new">supervisor.conf</span>
+├── <span class="new">docker-compose.yml</span>                     <span class="badge new">New</span>
+└── <span class="new">routes/health.php</span>                      <span class="badge new">New</span></div>
+  </div>
+
+  <div class="sub">
+    <h3>Website Repository</h3>
+    <div class="file-tree">
+<span class="dir">gov-auction-website/</span>
+├── <span class="dir">resources/js/Pages/</span>
+│   ├── <span class="dir">Auth/</span>
+│   │   ├── <span class="file">Login.vue</span>                      <span class="badge modify">Rebrand</span>
+│   │   ├── <span class="file">LoginOTP.vue</span>                   <span class="badge modify">Rebrand</span>
+│   │   └── <span class="mod">LoginRegister.vue</span>              <span class="badge modify">Add bidder_type</span>
+│   ├── <span class="dir">Bidding/</span>
+│   │   ├── <span class="mod">HomeBidding.vue</span>                <span class="badge modify">→ Govt Home</span>
+│   │   ├── <span class="mod">Categories.vue</span>                 <span class="badge modify">Govt categories</span>
+│   │   ├── <span class="mod">Details.vue</span>                    <span class="badge modify">+ Q&A, share, masking</span>
+│   │   ├── <span class="file">MyBids.vue</span>                    <span class="badge keep">Rebrand</span>
+│   │   ├── <span class="file">WatchList.vue</span>                  <span class="badge keep">Rebrand</span>
+│   │   └── <span class="file">Refund.vue</span>                    <span class="badge keep">Rebrand</span>
+│   ├── <span class="del">Classified/</span>                        <span class="badge remove">Remove entire folder</span>
+│   ├── <span class="del">Shop/</span>                              <span class="badge remove">Remove entire folder</span>
+│   ├── <span class="dir">User/</span>
+│   │   ├── <span class="file">Home.vue</span>                      <span class="badge modify">Auction-focused</span>
+│   │   ├── <span class="file">Notifications.vue</span>              <span class="badge keep">Rebrand</span>
+│   │   ├── <span class="file">Payment.vue</span>                   <span class="badge modify">+ Apple/Google Pay</span>
+│   │   └── <span class="del">MyAds.vue</span>                      <span class="badge remove">Remove</span>
+│   ├── <span class="new">Admin/</span>                             <span class="badge new">NEW — 17 Dashboard screens</span>
+│   │   ├── <span class="new">Overview.vue</span>
+│   │   ├── <span class="new">Pipeline.vue</span>
+│   │   ├── <span class="new">LiveBids.vue</span>
+│   │   ├── <span class="new">Financial.vue</span>
+│   │   ├── <span class="new">Entities.vue</span>
+│   │   ├── <span class="new">Reports.vue</span>
+│   │   ├── <span class="new">Compliance.vue</span>
+│   │   ├── <span class="new">Valuations.vue</span>
+│   │   ├── <span class="new">Invoices.vue</span>
+│   │   ├── <span class="new">Disputes.vue</span>
+│   │   ├── <span class="new">PriceReview.vue</span>
+│   │   ├── <span class="new">AuctionDetail.vue</span>
+│   │   ├── <span class="new">Users.vue</span>
+│   │   ├── <span class="new">Categories.vue</span>
+│   │   ├── <span class="new">Permissions.vue</span>
+│   │   ├── <span class="new">Notifications.vue</span>
+│   │   └── <span class="new">Search.vue</span>
+│   └── <span class="new">Static/</span>                            <span class="badge new">NEW — Static pages</span>
+│       ├── <span class="new">Terms.vue</span>
+│       ├── <span class="new">FAQ.vue</span>
+│       ├── <span class="new">About.vue</span>
+│       ├── <span class="new">KYCForm.vue</span>
+│       └── <span class="new">Invoice.vue</span>
+├── <span class="dir">app/Services/</span>
+│   ├── <span class="file">BiddingService.php</span>                 <span class="badge keep">Keep</span>
+│   └── <span class="del">ClassifiedService.php</span>              <span class="badge remove">Remove</span>
+├── <span class="dir">docker/</span>                                <span class="badge new">NEW</span>
+│   └── <span class="new">Dockerfile</span>
+└── <span class="dir">public/frontend/scss/</span>
+    ├── <span class="mod">details.scss</span>                       <span class="badge modify">Govt branding</span>
+    └── <span class="new">admin.scss</span>                         <span class="badge new">Dashboard styles</span></div>
+  </div>
+
+  <div class="sub">
+    <h3>Socket.io Repository</h3>
+    <div class="file-tree">
+<span class="dir">gov-auction-socket/</span>
+├── <span class="mod">socket-server.js</span>                       <span class="badge modify">Redis TLS, Azure config</span>
+├── <span class="file">package.json</span>                           <span class="badge keep">Keep</span>
+├── <span class="new">Dockerfile</span>                             <span class="badge new">New</span>
+└── <span class="new">.env.example</span>                           <span class="badge new">New</span></div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  Government Auction Platform — Technical Implementation Plan v1.0<br>
+  Ebdaa Digital Technology × Ministry of Finance — Tender 2025/4494 — Confidential<br>
+  Generated March 2026
+</div>
+
+</body>
+</html>

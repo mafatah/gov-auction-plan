@@ -7,6 +7,7 @@
 | File | Description |
 |------|-------------|
 | [`index.html`](index.html) | Full project plan — open in browser |
+| [`technical-plan.html`](technical-plan.html) | Technical implementation plan (Azure → Backend → Mobile → Website → Deploy) |
 | [`design.html`](design.html) | Interactive design prototype (Dashboard + Mobile + Website) |
 | [`requirements.md`](requirements.md) | Detailed tender requirements reference |
 
