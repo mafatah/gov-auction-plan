@@ -156,6 +156,18 @@ p { margin-bottom:12px; font-size:13.5px; }
 .cost-row:last-child { border-bottom:none; font-weight:700; color:var(--maroon); }
 .cost-row .amt { font-weight:700; font-family:'JetBrains Mono',monospace; }
 
+/* Gantt chart */
+.gantt { margin:20px 0; overflow-x:auto; }
+.gantt-header { display:grid; grid-template-columns:160px repeat(30,1fr); gap:0; font-size:10px; font-weight:700; margin-bottom:4px; }
+.gantt-header .gh-label { padding:6px 8px; color:var(--gray-500); }
+.gantt-header .gh-day { text-align:center; padding:4px 0; color:var(--gray-400); border-left:1px solid var(--gray-100); }
+.gantt-header .gh-week { text-align:center; padding:2px 0; font-size:9px; color:var(--azure); font-weight:700; }
+.gantt-row { display:grid; grid-template-columns:160px repeat(30,1fr); gap:0; margin-bottom:3px; min-height:28px; align-items:center; }
+.gantt-row .gr-label { font-size:11px; font-weight:600; padding:4px 8px; color:var(--gray-700); white-space:nowrap; }
+.gantt-row .gr-bar { border-radius:4px; height:22px; position:relative; }
+.gantt-row .gr-bar span { position:absolute; left:6px; top:3px; font-size:9px; font-weight:600; color:white; white-space:nowrap; }
+.gantt-week-sep { border-left:2px dashed var(--gray-200); }
+
 /* Footer */
 .footer { background:var(--navy); color:white; padding:24px 40px; text-align:center; font-size:12px; opacity:0.7; }
 
@@ -172,11 +184,11 @@ p { margin-bottom:12px; font-size:13.5px; }
   <div class="subtitle">From MzadQatar Fork to Production — Infrastructure, Backend, Mobile, Website & Dashboard</div>
   <div class="hero-stats">
     <div class="hero-stat"><div class="val">8 Phases</div><div class="lbl">Implementation</div></div>
-    <div class="hero-stat"><div class="val">60 Days</div><div class="lbl">Timeline</div></div>
+    <div class="hero-stat"><div class="val">30 Days</div><div class="lbl">4 Parallel Tracks</div></div>
     <div class="hero-stat"><div class="val">Azure</div><div class="lbl">Container Apps</div></div>
     <div class="hero-stat"><div class="val">3 Containers</div><div class="lbl">API + Web + Socket</div></div>
     <div class="hero-stat"><div class="val">~$1,240/mo</div><div class="lbl">Azure Cost</div></div>
-    <div class="hero-stat"><div class="val">Auction Only</div><div class="lbl">No Classifieds</div></div>
+    <div class="hero-stat"><div class="val">Auction Only</div><div class="lbl">Fork from Live</div></div>
   </div>
 </div>
 
@@ -422,13 +434,66 @@ p { margin-bottom:12px; font-size:13.5px; }
   </div>
 
   <div class="sub">
-    <h3>What We Fork (3 Repositories)</h3>
+    <h3>What We Fork (3 Repositories) — From LIVE Branches</h3>
+    <div class="card azure-border" style="margin-bottom:14px">
+      <div class="card-title">IMPORTANT: Fork from Production (master), NOT feature branches</div>
+      <p>We fork the exact code currently running in production to ensure stability. Feature branches (like MouBranchSept2025) may have experimental changes that aren't battle-tested.</p>
+    </div>
     <table>
-      <tr><th>Repo</th><th>Source (Bitbucket)</th><th>New (GitHub/Private)</th><th>Tech</th></tr>
-      <tr><td><strong>API</strong></td><td>mzadqatar-api → MouBranchSept2025</td><td>gov-auction-api</td><td>Laravel PHP 8.2</td></tr>
-      <tr><td><strong>Website</strong></td><td>mzad-new-website → feature/analytics-dashboard</td><td>gov-auction-website</td><td>Laravel + Vue 3 + Inertia</td></tr>
-      <tr><td><strong>Socket</strong></td><td>Extract from API socket-server.js</td><td>gov-auction-socket</td><td>Node.js 18 + Socket.io</td></tr>
+      <tr><th>Repo</th><th>Source (Bitbucket)</th><th>Live Branch</th><th>Latest</th><th>New (GitHub/Private)</th></tr>
+      <tr><td><strong>API</strong></td><td>mzadqatar-api</td><td><code>master</code> (HEAD)</td><td>Mar 9, 2026</td><td>gov-auction-api</td></tr>
+      <tr><td><strong>Website</strong></td><td>mzad-new-website</td><td><code>master</code> (HEAD)</td><td>Mar 10, 2026</td><td>gov-auction-website</td></tr>
+      <tr><td><strong>Socket</strong></td><td>Extract from API socket-server.js</td><td>—</td><td>—</td><td>gov-auction-socket</td></tr>
     </table>
+    <div class="code-block"><span class="comment"># Fork from live production branches</span>
+<span class="func">git</span> clone git@bitbucket.org:ebdaa/mzadqatar-api.git gov-auction-api
+<span class="keyword">cd</span> gov-auction-api
+<span class="func">git</span> checkout master                  <span class="comment"># ← LIVE branch (not MouBranchSept2025)</span>
+<span class="func">git</span> remote remove origin
+<span class="func">git</span> remote add origin git@github.com:ebdaa/gov-auction-api.git
+<span class="func">git</span> push -u origin master
+
+<span class="func">git</span> clone git@bitbucket.org:ebdaa/mzad-new-website.git gov-auction-website
+<span class="keyword">cd</span> gov-auction-website
+<span class="func">git</span> checkout master                  <span class="comment"># ← LIVE branch</span>
+<span class="func">git</span> remote remove origin
+<span class="func">git</span> remote add origin git@github.com:ebdaa/gov-auction-website.git
+<span class="func">git</span> push -u origin master</div>
+  </div>
+
+  <div class="sub">
+    <h3>Database — Export from Live Production</h3>
+    <div class="card maroon-border">
+      <div class="card-title">Export SCHEMA + SEED DATA from Live MySQL (192.168.0.149)</div>
+      <p>We need the live database schema (all tables, indexes, stored procedures) plus reference data (categories, settings, payment configs). <strong>NOT user data or bids</strong> — those are production-sensitive.</p>
+    </div>
+    <div class="code-block"><span class="comment"># Step 1: Export schema-only from live production DB</span>
+<span class="func">mysqldump</span> -h 192.168.0.149 -u <span class="var">$DB_USER</span> -p --no-data \
+  --routines --triggers --events \
+  mzadqatar > schema_live.sql
+
+<span class="comment"># Step 2: Export reference/config data (small tables only)</span>
+<span class="func">mysqldump</span> -h 192.168.0.149 -u <span class="var">$DB_USER</span> -p \
+  --no-create-info \
+  mzadqatar categories types sub_types settings \
+  payment_methods countries cities \
+  bid_categories bid_types \
+  > seed_data.sql
+
+<span class="comment"># Step 3: Import into local Docker MySQL</span>
+<span class="func">mysql</span> -h 127.0.0.1 -u root -p gov_auction < schema_live.sql
+<span class="func">mysql</span> -h 127.0.0.1 -u root -p gov_auction < seed_data.sql
+
+<span class="comment"># Step 4: Run new government migration on top</span>
+<span class="func">php</span> artisan migrate  <span class="comment"># Creates 8 new gov tables</span>
+
+<span class="comment"># Key tables we need from live:</span>
+<span class="comment">#   Schema: users1, bid_products, bids, bid_info, auto_bids,</span>
+<span class="comment">#           bid_watch_lists, hold_amounts, request_refunds,</span>
+<span class="comment">#           lot_questions, categories, types, sub_types,</span>
+<span class="comment">#           payment_history, notifications, settings</span>
+<span class="comment">#   Seed:   categories, types, sub_types, countries, cities,</span>
+<span class="comment">#           payment_methods, bid_categories, settings</span></div>
   </div>
 
   <div class="sub">
@@ -1023,7 +1088,7 @@ p { margin-bottom:12px; font-size:13.5px; }
 <div class="phase" id="p7">
   <div class="phase-header">
     <div class="phase-num red">P7</div>
-    <div class="phase-info"><h2>Testing, QA & Azure Deployment</h2><div class="meta">Week 5-8 — Days 29-60 — QA Team + DevOps</div></div>
+    <div class="phase-info"><h2>Testing, QA & Azure Deployment</h2><div class="meta">Week 3-4 — Days 18-30 — QA Team + DevOps (parallel with development)</div></div>
   </div>
 
   <div class="grid-2">
@@ -1086,45 +1151,276 @@ p { margin-bottom:12px; font-size:13.5px; }
 <div class="phase" id="timeline">
   <div class="phase-header">
     <div class="phase-num azure">📅</div>
-    <div class="phase-info"><h2>60-Day Timeline</h2><div class="meta">From Contract Signing to Go-Live</div></div>
+    <div class="phase-info"><h2>30-Day Parallel Timeline</h2><div class="meta">4 Weeks — 4 Parallel Tracks — Ship in 1 Month</div></div>
   </div>
 
-  <div class="timeline">
-    <div class="timeline-item">
-      <div class="week">Week 1 (Days 1-5)</div>
-      <div class="title">Azure Infra + Fork + Dockerize</div>
-      <div class="details">Create Azure resources (MySQL, Redis, Blob, VNet). Fork 3 MzadQatar repos. Write Dockerfiles. docker-compose running locally. Remove classified code (~40%).</div>
+  <div class="card azure-border" style="margin-bottom:20px">
+    <div class="card-title">Parallel Work Strategy</div>
+    <p>With 4 parallel tracks (DevOps, Backend, Frontend/Dashboard, Mobile), we compress the work into 30 days. Teams work simultaneously — the backend doesn't wait for infra, and mobile doesn't wait for dashboard.</p>
+  </div>
+
+  <!-- VISUAL GANTT -->
+  <div style="overflow-x:auto">
+  <table style="min-width:900px;font-size:11px">
+    <tr>
+      <th style="width:170px;min-width:170px">Track / Task</th>
+      <th colspan="7" style="background:var(--azure);text-align:center">Week 1 (D1-7)</th>
+      <th colspan="7" style="background:var(--green);text-align:center">Week 2 (D8-14)</th>
+      <th colspan="7" style="background:var(--purple);text-align:center">Week 3 (D15-21)</th>
+      <th colspan="9" style="background:var(--maroon);text-align:center">Week 4 (D22-30)</th>
+    </tr>
+
+    <!-- Track 1: DevOps -->
+    <tr><td colspan="31" style="background:var(--azure-light);font-weight:800;color:var(--azure);padding:8px 12px;font-size:12px">TRACK 1: DevOps & Infrastructure</td></tr>
+    <tr>
+      <td style="font-weight:600">Azure resources</td>
+      <td colspan="3" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Create RG, ACR, VNet</span></td>
+      <td colspan="27"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">MySQL + Redis + Blob</td>
+      <td></td>
+      <td colspan="3" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Provision DBs</span></td>
+      <td colspan="26"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Dockerfiles + Compose</td>
+      <td colspan="5" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">3 Dockerfiles + docker-compose</span></td>
+      <td colspan="25"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">DB export from live</td>
+      <td colspan="2" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Schema+Seed</span></td>
+      <td colspan="28"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">CI/CD pipeline</td>
+      <td colspan="7"></td>
+      <td colspan="5" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">GitHub Actions → Azure</span></td>
+      <td colspan="18"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Staging deploy</td>
+      <td colspan="14"></td>
+      <td colspan="5" style="background:var(--azure);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Azure staging</span></td>
+      <td colspan="11"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Production deploy</td>
+      <td colspan="25"></td>
+      <td colspan="5" style="background:var(--maroon);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">GO LIVE</span></td>
+    </tr>
+
+    <!-- Track 2: Backend -->
+    <tr><td colspan="31" style="background:var(--green-light);font-weight:800;color:var(--green);padding:8px 12px;font-size:12px">TRACK 2: Backend API (Laravel)</td></tr>
+    <tr>
+      <td style="font-weight:600">Fork + clean code (~40%)</td>
+      <td colspan="5" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Remove classifieds/shops</span></td>
+      <td colspan="25"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">9 Azure code changes</td>
+      <td colspan="3"></td>
+      <td colspan="5" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Redis TLS, Blob, SSL, etc</span></td>
+      <td colspan="22"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">New DB tables (8)</td>
+      <td colspan="5"></td>
+      <td colspan="3" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Migrations</span></td>
+      <td colspan="22"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Gov API endpoints (17)</td>
+      <td colspan="7"></td>
+      <td colspan="10" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Entities, Pipeline, Valuations, Disputes, KYC, Invoices, Compliance</span></td>
+      <td colspan="13"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Modify existing (7)</td>
+      <td colspan="10"></td>
+      <td colspan="7" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">BidsCtrl, Users, Payment mods</span></td>
+      <td colspan="13"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Unit + integration tests</td>
+      <td colspan="17"></td>
+      <td colspan="7" style="background:var(--green);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">PHPUnit tests</span></td>
+      <td colspan="6"></td>
+    </tr>
+
+    <!-- Track 3: Frontend -->
+    <tr><td colspan="31" style="background:var(--purple-light);font-weight:800;color:var(--purple);padding:8px 12px;font-size:12px">TRACK 3: Website + Admin Dashboard (Vue 3)</td></tr>
+    <tr>
+      <td style="font-weight:600">Fork + clean website</td>
+      <td colspan="4" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Remove classified/shop</span></td>
+      <td colspan="26"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Ministry branding</td>
+      <td colspan="3"></td>
+      <td colspan="5" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Maroon theme, fonts, logos</span></td>
+      <td colspan="22"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Website pages (rebrand)</td>
+      <td colspan="5"></td>
+      <td colspan="7" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Home, Detail, Login, User, Refund</span></td>
+      <td colspan="18"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">New pages (T&C, FAQ...)</td>
+      <td colspan="10"></td>
+      <td colspan="5" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Terms, FAQ, About, KYC, Invoice</span></td>
+      <td colspan="15"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Admin Dashboard (17 scr)</td>
+      <td colspan="7"></td>
+      <td colspan="14" style="background:var(--purple);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Overview → Pipeline → LiveBids → Financial → Entities → Reports → Compliance → Disputes → ...</span></td>
+      <td colspan="9"></td>
+    </tr>
+
+    <!-- Track 4: Mobile -->
+    <tr><td colspan="31" style="background:var(--orange-light);font-weight:800;color:var(--orange);padding:8px 12px;font-size:12px">TRACK 4: Mobile Apps (iOS + Android)</td></tr>
+    <tr>
+      <td style="font-weight:600">Fork + clean code</td>
+      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Remove classifieds/shops/chatbot</span></td>
+      <td colspan="25"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Ministry branding</td>
+      <td colspan="3"></td>
+      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Icons, colors, tabs, splash</span></td>
+      <td colspan="22"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Modify existing screens</td>
+      <td colspan="7"></td>
+      <td colspan="7" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Detail, masking, bid bar, Q&A</span></td>
+      <td colspan="16"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">New screens (10)</td>
+      <td colspan="10"></td>
+      <td colspan="10" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">AutoBid, KYC, DepositPay, Invoice, SharePopup, HelpFAB, MoreMenu</span></td>
+      <td colspan="10"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Connect to Azure API</td>
+      <td colspan="17"></td>
+      <td colspan="5" style="background:var(--orange);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Point to new API</span></td>
+      <td colspan="8"></td>
+    </tr>
+
+    <!-- QA -->
+    <tr><td colspan="31" style="background:var(--red-light);font-weight:800;color:var(--red);padding:8px 12px;font-size:12px">QA & LAUNCH</td></tr>
+    <tr>
+      <td style="font-weight:600">E2E testing (all)</td>
+      <td colspan="17"></td>
+      <td colspan="8" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Full flow: register → bid → win → pay → KYC</span></td>
+      <td colspan="5"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Security scan</td>
+      <td colspan="21"></td>
+      <td colspan="4" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">OWASP</span></td>
+      <td colspan="5"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">Load test (1K users)</td>
+      <td colspan="22"></td>
+      <td colspan="3" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">k6</span></td>
+      <td colspan="5"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">UAT + Bug fixes</td>
+      <td colspan="21"></td>
+      <td colspan="7" style="background:var(--red);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px">Ministry UAT + hotfixes</span></td>
+      <td colspan="2"></td>
+    </tr>
+    <tr>
+      <td style="font-weight:600">GO LIVE</td>
+      <td colspan="28"></td>
+      <td colspan="2" style="background:var(--maroon);border-radius:4px"><span style="color:white;font-size:9px;padding:2px 4px;font-weight:800">🚀 LIVE</span></td>
+    </tr>
+  </table>
+  </div>
+
+  <div class="sub">
+    <h3>Team Assignment per Track</h3>
+    <table>
+      <tr><th>Track</th><th>Lead</th><th>Team</th><th>Days</th></tr>
+      <tr><td style="color:var(--azure);font-weight:700">Track 1: DevOps</td><td>Abdullah Sanallah (Tech Director)</td><td>1 DevOps engineer</td><td>Throughout</td></tr>
+      <tr><td style="color:var(--green);font-weight:700">Track 2: Backend</td><td>Tigran Mansourian (Backend Lead)</td><td>Ronen + 1 backend dev</td><td>D1-D24</td></tr>
+      <tr><td style="color:var(--purple);font-weight:700">Track 3: Frontend</td><td>Victoria Babakina (Design) + Frontend dev</td><td>1-2 frontend devs</td><td>D1-D24</td></tr>
+      <tr><td style="color:var(--orange);font-weight:700">Track 4: Mobile</td><td>Tejas Riyai (Mobile Lead)</td><td>Arun (iOS) + 1 Android dev</td><td>D1-D24</td></tr>
+      <tr><td style="color:var(--red);font-weight:700">QA</td><td>Ahmed Syed (QA Lead)</td><td>Mazen + Mostafa Eid</td><td>D18-D30</td></tr>
+    </table>
+  </div>
+
+  <div class="sub">
+    <h3>Week-by-Week Summary</h3>
+    <div class="grid-2">
+      <div class="card azure-border">
+        <div class="card-title">Week 1 (Days 1-7) — Foundation</div>
+        <ul>
+          <li><strong>All tracks</strong>: Fork from <code>master</code> (live), clean classified code</li>
+          <li><strong>DevOps</strong>: Azure resources, Dockerfiles, docker-compose, DB export from live</li>
+          <li><strong>Backend</strong>: 9 Azure code changes, new DB migrations</li>
+          <li><strong>Frontend</strong>: Fork + clean website, start ministry branding</li>
+          <li><strong>Mobile</strong>: Fork + clean iOS/Android, start branding</li>
+        </ul>
+        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">End of Week 1: All repos forked, cleaned, running locally via Docker</p>
+      </div>
+      <div class="card green-border">
+        <div class="card-title">Week 2 (Days 8-14) — Build</div>
+        <ul>
+          <li><strong>DevOps</strong>: CI/CD pipeline (GitHub Actions → Azure)</li>
+          <li><strong>Backend</strong>: 17 new API endpoints, modify existing controllers</li>
+          <li><strong>Frontend</strong>: Rebrand website pages, start admin dashboard</li>
+          <li><strong>Mobile</strong>: Modify existing screens (detail, bid bar, Q&A, masking)</li>
+        </ul>
+        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">End of Week 2: New APIs working, website rebranded, mobile UI updated</p>
+      </div>
+      <div class="card purple-border">
+        <div class="card-title">Week 3 (Days 15-21) — Integrate</div>
+        <ul>
+          <li><strong>DevOps</strong>: Azure staging deployment</li>
+          <li><strong>Backend</strong>: Integration tests, optimize queries</li>
+          <li><strong>Frontend</strong>: Complete dashboard (17 screens), new pages (T&C, FAQ)</li>
+          <li><strong>Mobile</strong>: New screens (KYC, AutoBid, Invoice, Share, Help)</li>
+          <li><strong>QA starts</strong>: E2E testing begins on staging</li>
+        </ul>
+        <p style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">End of Week 3: Full app on Azure staging, QA in progress</p>
+      </div>
+      <div class="card maroon-border">
+        <div class="card-title">Week 4 (Days 22-30) — Ship</div>
+        <ul>
+          <li><strong>DevOps</strong>: Production deploy, DNS, monitoring</li>
+          <li><strong>All</strong>: Bug fixes from QA and UAT</li>
+          <li><strong>QA</strong>: Security scan, load test (1K concurrent), full flow E2E</li>
+          <li><strong>UAT</strong>: Ministry committee acceptance testing</li>
+          <li><strong>Mobile</strong>: Connect to Azure API, TestFlight/Play Console</li>
+          <li><strong>Day 30</strong>: 🚀 GO LIVE</li>
+        </ul>
+        <p style="font-size:11px;color:var(--maroon);font-weight:700;margin-top:8px">End of Week 4: Production live, monitoring active, team on standby</p>
+      </div>
     </div>
-    <div class="timeline-item">
-      <div class="week">Week 2 (Days 6-12)</div>
-      <div class="title">9 Azure Code Changes + Database Schema</div>
-      <div class="details">Redis TLS, Blob storage, MySQL SSL, session/queue/log changes. Create 8 new database tables. Health check endpoints. Start new API controllers.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="week">Week 3 (Days 13-19)</div>
-      <div class="title">Backend Features + Dashboard Start</div>
-      <div class="details">Complete new API endpoints (entities, pipeline, valuations, disputes, KYC, invoices, compliance). Start admin dashboard (Vue 3). Begin mobile branding changes.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="week">Week 4 (Days 20-28)</div>
-      <div class="title">Dashboard + Mobile + Website</div>
-      <div class="details">Complete 17 dashboard screens. iOS + Android: remove classifieds, add government features, ministry branding. Website: rebrand all pages, add new pages (T&C, FAQ, KYC, Invoice).</div>
-    </div>
-    <div class="timeline-item">
-      <div class="week">Week 5-6 (Days 29-42)</div>
-      <div class="title">QA + Integration Testing</div>
-      <div class="details">Unit tests, integration tests, E2E testing (mobile + website). Load testing (1,000 concurrent). Security scan (OWASP). Fix bugs from testing.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="week">Week 7 (Days 43-49)</div>
-      <div class="title">Azure Staging + UAT</div>
-      <div class="details">Deploy to Azure staging environment. Ministry committee UAT. App Store / Play Store submission. Final bug fixes from UAT feedback.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="week">Week 8 (Days 50-60)</div>
-      <div class="title">Go-Live + Monitoring</div>
-      <div class="details">Production deploy. DNS cutover. Staff training. 24/7 monitoring for first week. Hot-fix patches as needed. Handover documentation.</div>
-    </div>
+  </div>
+
+  <div class="card navy-border">
+    <div class="card-title">Critical Dependencies (things that block other tracks)</div>
+    <table>
+      <tr><th>Blocker</th><th>Blocks</th><th>When Needed</th></tr>
+      <tr><td>DB export from live (schema + seed)</td><td>Backend can't test locally</td><td>Day 1-2</td></tr>
+      <tr><td>docker-compose working</td><td>All devs need local env</td><td>Day 3</td></tr>
+      <tr><td>API endpoints ready</td><td>Dashboard + Mobile need APIs</td><td>Day 14 (most)</td></tr>
+      <tr><td>Azure staging deployed</td><td>QA can't start E2E</td><td>Day 18</td></tr>
+      <tr><td>Payment gateway (Payfort) sandbox</td><td>Can't test deposit/payment flow</td><td>Day 14</td></tr>
+      <tr><td>Firebase project created</td><td>Push notifications</td><td>Day 10</td></tr>
+      <tr><td>Twilio configured</td><td>OTP/SMS login</td><td>Day 10</td></tr>
+    </table>
   </div>
 </div>
 
